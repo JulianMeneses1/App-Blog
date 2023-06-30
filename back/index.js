@@ -18,12 +18,10 @@ app.use(express.urlencoded({extended:true})); // para content-type igual a x-www
 
 // Importamos las rutas
 const article_routes = require("./routes/articleRoute"); 
-const category_routes = require("./routes/categoryRoute");
 const image_routes = require("./routes/imageRoute");
 
 // Cargamos las rutas en el servidor (en este caso anteponemos "api" a todas las rutas definidas en article)
 app.use("/api/articles", article_routes);
-app.use("/api/categories", category_routes);
 app.use("/api/images", image_routes);
 
 // Escuchar peticiones HTTP

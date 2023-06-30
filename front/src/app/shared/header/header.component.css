@@ -35,6 +35,13 @@
     border: none;
 }
 
+.navbar-brand {
+    font-size: 45px;
+    font-family: "Allura";
+    padding: 0px;
+    margin: 0px
+}
+
 .link {
     font-size: 18px;   
     color: var(--background-color-dark)   
@@ -49,8 +56,8 @@ fa-icon{
     cursor: pointer;
 }
 
-fa-icon:focus{
-    filter: drop-shadow(0, 0, 0, 0);
+.navbar-toggler:focus{
+    box-shadow: 0 0 0 0;
 }
 
 /* MODAL MENU COLAPSADO */

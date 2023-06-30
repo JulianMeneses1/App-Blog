@@ -1,4 +1,14 @@
 img {
-    height: 105vh;
+    height: 95vh;
     width: 100vw;
 }
+h1 {
+    position: absolute;
+    left: 30%; 
+    top: 27%; 
+    transform: translate(-16%, -50%);
+    color: white;
+    filter: drop-shadow(0 10px 5px black);
+    
+}
+

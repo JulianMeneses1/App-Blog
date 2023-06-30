@@ -1,5 +1,5 @@
 <header> 
-    <nav class="navbar navbar-expand-xl fixed-top p-1" id="menu" appMenuScroll>        
+    <nav class="navbar navbar-expand-md fixed-top p-1" id="menu" appMenuScroll>        
         <div class="container-fluid">
             <button 
                 class="navbar-toggler me-1" 
@@ -11,7 +11,8 @@
                     <fa-icon *ngIf="visibleScroll" [icon]="faBars"></fa-icon>                    
                 </span>
             </button>
-            <div class="collapse navbar-collapse justify-content-center">
+            <h3 class="navbar-brand">Blogpedia</h3>
+            <div class="collapse navbar-collapse ms-5">
                 <ul class="navbar-nav mb-0 gap-3 align-items-center">                            
                     <li class="nav-item">
                         <a class="nav-link link" routerLink="home">Inicio</a>
