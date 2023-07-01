@@ -7,13 +7,13 @@ const router = express.Router();
 const ArticleController = require("../controllers/articleController");
 
 // con el ? hacemos que el parámetro de ruta sea opcional
-router.get("/:quantity?",ArticleController.getAllArticles);
+router.get("/:page",ArticleController.getAllArticles);
 
-router.get("/category/:category/:quantity?",ArticleController.getArticlesByCategory);
+router.get("/category/:category/:page",ArticleController.getArticlesByCategory);
 
 router.get("/id/:id",ArticleController.getArticleById);
 
-router.get("/search/:string",ArticleController.searcher);
+router.get("/search/:string/:page",ArticleController.searcher);
 
 router.post("",ArticleController.save);
 

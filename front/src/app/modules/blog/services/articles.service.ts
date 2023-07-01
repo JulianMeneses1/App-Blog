@@ -30,27 +30,23 @@ export class ArticlesService {
     sessionStorage.setItem('articles',JSON.stringify(articles));  
   }
 
-  public setStorage():void {
-    this.getArticles().subscribe(data => {
-      sessionStorage.setItem('articles',JSON.stringify(data));      
-      this.subjectUpdateArticles.next(data);
+  public setStorage(page:number):void {
+    this.getArticles(page).subscribe(data => {
+      sessionStorage.setItem('articles',JSON.stringify(data.docs));      
+      this.subjectUpdateArticles.next(data.docs);
     })      
   }
 
-  public getArticles ():Observable <any> {    
-    return this.httpClient.get<any>(this.url);
+  public getArticles (page:number):Observable <any> {    
+    return this.httpClient.get<any>(this.url + '/' + page);
   }
 
-  public getArticlesByPage (pageNum:number):any {
-
+  public getArticlesByCategory(category:string, page:number):Observable<any>{
+    return this.httpClient.get<any>(this.url+'category/' + category + '/' +page)
   }
 
-  public getArticlesByCategory(category:string):Observable<any>{
-    return this.httpClient.get<any>(this.url+'category/'+category)
-  }
-
-  public getArticleBySearcher (string:string): Observable<any> {
-    return this.httpClient.get<any>(this.url+'search/'+string)
+  public getArticleBySearcher (string:string, page:number): Observable<any> {
+    return this.httpClient.get<any>(this.url+'search/ '+ string + '/'+page)
   }
 
   public addArticle (article: ArticleModel):Observable <ArticleModel> {

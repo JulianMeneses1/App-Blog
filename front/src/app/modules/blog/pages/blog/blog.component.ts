@@ -16,6 +16,7 @@ export class BlogComponent implements OnInit {
   editionMode: boolean = false;
   noArticleFound: boolean = false;
   idArticleSelected: string = "";
+  page : number = 2;
 
   constructor(private articlesService: ArticlesService) {
     this.articlesSubscription = this.articlesService.onUpdateArticles().subscribe(
@@ -25,19 +26,19 @@ export class BlogComponent implements OnInit {
   ngOnInit():void {
     sessionStorage.getItem('articles')
     ? this.articles = JSON.parse(sessionStorage.getItem('articles')!)
-    : this.articlesService.setStorage();
+    : this.articlesService.setStorage(1);
   } 
 
   filterArticles (category:string) {
-    this.articlesService.getArticlesByCategory(category).subscribe(
+    this.articlesService.getArticlesByCategory(category, 1).subscribe(
       data => {
-        this.articlesService.updateArticles(data);
+        this.articlesService.updateArticles(data.docs);
         this.noArticleFound = false;
       })
   }
 
   showAllArticles () {
-    this.articlesService.setStorage();
+    this.articlesService.setStorage(1);
     this.noArticleFound = false;
   }
 
@@ -47,9 +48,9 @@ export class BlogComponent implements OnInit {
 
   onEnter (event:any) {
     if(event.target.value != "") {
-      this.articlesService.getArticleBySearcher(event.target.value).subscribe({
+      this.articlesService.getArticleBySearcher(event.target.value, 1).subscribe({
         next: (data => {
-          this.articles = data;
+          this.articles = data.docs;
           this.noArticleFound = false;
         }), error: (() => this.noArticleFound = true)
       })
@@ -62,7 +63,11 @@ export class BlogComponent implements OnInit {
   }
 
   onScrollDown () {
-    console.log("asd")
+    this.articlesService.getArticles(this.page).subscribe(
+      (data) => {
+        data.docs.forEach((article:any)=> this.articles.push(article));       
+      }
+    );
+    this.page += 1;
   }
-
 }
