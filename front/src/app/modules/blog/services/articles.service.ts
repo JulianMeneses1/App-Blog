@@ -45,12 +45,16 @@ export class ArticlesService {
     return this.httpClient.get<any>(this.url+'category/'+category)
   }
 
+  public getArticleBySearcher (string:string): Observable<any> {
+    return this.httpClient.get<any>(this.url+'search/'+string)
+  }
+
   public addArticle (article: ArticleModel):Observable <ArticleModel> {
     return this.httpClient.post<ArticleModel>(this.url,article,this.httpOptions);
   }
 
   public updatePerson (article: ArticleModel): Observable <ArticleModel> {
-    return this.httpClient.put<ArticleModel>(this.url+article.id,article,this.httpOptions);
+    return this.httpClient.put<ArticleModel>(this.url+article._id,article,this.httpOptions);
   }
 
   public  deletePerson (id: number) :Observable <ArticleModel> {

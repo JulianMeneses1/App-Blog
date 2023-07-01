@@ -1,18 +1,76 @@
 <div class=" my-4 container" style="padding: 0 7em">
-    <app-nav-categories></app-nav-categories>
-    <div class="d-flex flex-wrap justify-content-between" >
-        <div class="card bg-dark text-white my-2" *ngFor="let article of articles">
-            <a class="nav-link" href="/">
-                <div class="image-container">
-                    <img [src]="article.image" alt="Imagen artículo">
+    <div class="d-flex align-items-center gap-5">     
+        <div class="d-flex justify-content-between align-items-center" style="width: 70%">
+            <a class="nav-link category my-3" href="/blog" (click)="showAllArticles()">
+                Todos
+            </a>
+            <a class="nav-link category  my-3" href="/categories/política" (click)="filterArticles('Política')">
+                Política
+            </a>
+            <a class="nav-link category   my-3" href="/categories/deportes"  (click)="filterArticles('Deportes')">
+                Deportes
+            </a>
+            <a class="nav-link category   my-3" href="/categories/economía"  (click)="filterArticles('Economía')">
+                Economía
+            </a>
+            <a class="nav-link category   my-3" href="/categories/medioambiente"  (click)="filterArticles('Medioambiente')">
+                Medioambiente
+            </a>
+            <a class="nav-link category   my-3" href="/categories/vacaciones"  (click)="filterArticles('Vacaciones')">
+                Vacaciones
+            </a>
+        </div>
+        <div class="d-flex justify-content-end" style="width: 30%">
+            <svg *ngIf="!searcherVisible" (click)="toggleSearcher()" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="gray" class="bi bi-search" viewBox="0 0 16 16">
+                <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+            </svg>
+            <div *ngIf="searcherVisible" class="position-relative w-100">
+                <svg id="searcher-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="gray" class="bi bi-search" viewBox="0 0 16 16">
+                    <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+                </svg>
+                <input (keyup.enter)="onEnter($event)" maxlength="30" placeholder="Buscar por título" >
+                <svg id="close-searcher-icon" (click)="toggleSearcher()" xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="gray" class="bi bi-x" viewBox="0 0 16 16">
+                    <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+                </svg>
+            </div>
+            
+        </div>
+    </div>
+    <div *ngIf="!noArticleFound" class="d-flex flex-wrap" >
+        <div class="card bg-dark text-white my-3 me-4" *ngFor="let article of articles">                         
+            <div class="overlay"></div>
+            <img [src]="article.image" alt="Imagen artículo">            
+            <div class="card-img-overlay d-flex justify-content-between">
+                <p class="card-text date">{{(article.created) | date: 'dd/MM/yyyy'}}</p> 
+                <svg (click)="toggleEdition(article)" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-three-dots-vertical" viewBox="0 0 16 16">
+                    <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/>
+                </svg>                 
+            </div>
+            <div *ngIf="editionMode && article._id==idArticleSelected" class="edition-options">             
+                <div class="btn btn-light d-flex align-items-center mb-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" fill="blue" class="bi bi-pencil-square me-2" viewBox="0 0 16 16">
+                        <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+                        <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/>
+                    </svg>
+                    <span>Editar</span>                    
                 </div>
-                <div class="card-img-overlay">
-                  <p class="card-text date">{{(article.created) | date: 'dd/MM/yyyy'}}</p>                  
-                </div>
+                <div class="btn btn-light d-flex align-items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" fill="red" class="bi bi-trash me-2" viewBox="0 0 16 16">
+                        <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6Z"/>
+                        <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1ZM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118ZM2.5 3h11V2h-11v1Z"/>
+                    </svg>
+                    <span>Eliminar</span>                   
+                </div>             
+            </div>
+            <a class="nav-link" href="/">  
                 <div class="position-absolute bottom-0 m-3">
                     <h4 class=" text-center card-text title">{{article.title}} </h4>
                 </div>
             </a>
         </div>        
+    </div>
+    <div *ngIf="noArticleFound" class="mt-5">
+        <h5 class="text-center">Sin Resultados</h5>
+        <p class="text-center">Parece que el artículo que estás buscando no existe. Prueba con otra búsqueda</p>      
     </div>
 </div>

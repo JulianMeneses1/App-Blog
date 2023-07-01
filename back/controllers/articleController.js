@@ -126,7 +126,7 @@ const searcher = (req, res) => {
         // verificamos si hay algún título que incluya el parámetro pasado (lo tomamos dentro de una expresión regular)
         {"title": {"$regex": req.params.string, "$options": "i"}}
     )
-    .sort({fecha: -1})
+    .sort({created: -1})
     .exec()
     .then ((articles) => {
         if (articles.length==0) {

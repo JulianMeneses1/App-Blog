@@ -4,7 +4,6 @@ import { SharedRoutingModule } from './shared-routing.module';
 import { FooterComponent } from './footer/footer.component';
 import { HeaderComponent } from './header/header.component';
 import { MenuScrollDirective } from './header/directives/menu-scroll.directive';
-import { NavCategoriesComponent } from './nav-categories/nav-categories.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 
@@ -12,8 +11,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
   declarations: [
     FooterComponent,
     HeaderComponent,
-    MenuScrollDirective,
-    NavCategoriesComponent
+    MenuScrollDirective
   ],
   imports: [
     CommonModule,
@@ -22,8 +20,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
   ],
   exports: [
     FooterComponent,
-    HeaderComponent,
-    NavCategoriesComponent
+    HeaderComponent
   ]
 })
 export class SharedModule { }

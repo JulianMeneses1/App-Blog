@@ -12,6 +12,10 @@ export class BlogComponent implements OnInit {
 
   articles: ArticleModel[] = [];
   articlesSubscription?: Subscription;
+  searcherVisible: boolean = false;
+  editionMode: boolean = false;
+  noArticleFound: boolean = false;
+  idArticleSelected: string = "";
 
   constructor(private articlesService: ArticlesService) {
     this.articlesSubscription = this.articlesService.onUpdateArticles().subscribe(
@@ -23,5 +27,38 @@ export class BlogComponent implements OnInit {
     ? this.articles = JSON.parse(sessionStorage.getItem('articles')!)
     : this.articlesService.setStorage();
   } 
+
+  filterArticles (category:string) {
+    this.articlesService.getArticlesByCategory(category).subscribe(
+      data => {
+        this.articlesService.updateArticles(data.articles);
+        this.noArticleFound = false;
+      })
+  }
+
+  showAllArticles () {
+    this.articlesService.setStorage();
+    this.noArticleFound = false;
+  }
+
+  toggleSearcher () {
+    this.searcherVisible = !this.searcherVisible;
+  }
+
+  onEnter (event:any) {
+    if(event.target.value != "") {
+      this.articlesService.getArticleBySearcher(event.target.value).subscribe({
+        next: (data => {
+          this.articles = data.articles;
+          this.noArticleFound = false;
+        }), error: (() => this.noArticleFound = true)
+      })
+    }   
+  }
+
+  toggleEdition (article: ArticleModel) {
+    this.editionMode = !this.editionMode;
+    this.idArticleSelected = article._id!;
+  }
 
 }
