@@ -1,17 +1,18 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-
+import { CommonModule, DatePipe } from '@angular/common';
 import { BlogRoutingModule } from './blog-routing.module';
 import { BlogComponent } from './pages/blog/blog.component';
 
-
 @NgModule({
   declarations: [
-    BlogComponent
+    BlogComponent,
   ],
   imports: [
-    CommonModule,
+    CommonModule,    
     BlogRoutingModule
+  ],
+  providers: [
+    DatePipe
   ]
 })
 export class BlogModule { }

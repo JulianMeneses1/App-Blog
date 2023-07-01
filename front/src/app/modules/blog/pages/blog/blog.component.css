@@ -12,10 +12,11 @@ img {
     width: 100%;
     object-fit: fill;
 }
-.title {
+.title, .date {
     filter: drop-shadow(0 0 10px black);
 }
 
 .category:hover {
-    color:rgb(114, 190, 190)
+    color:rgb(114, 190, 190);
+    cursor: pointer;
 }

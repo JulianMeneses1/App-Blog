@@ -1,3 +1,3 @@
 export const environment = {
-    url: "https://app-personas-production.up.railway.app/"
+    url: "http://localhost:3900/api/"
 }

@@ -1,66 +1,35 @@
 <div class=" my-4 container" style="padding: 0 7em">
     <div class="d-flex justify-content-between align-items-center gap-3">     
-        <a class="nav-link category my-3" href="/">
+        <a class="nav-link category my-3" (click)="filterArticles()">
             Todos
         </a>
-        <a class="nav-link category my-3" href="/">
+        <a class="nav-link category my-3" (click)="filterArticles()">
             Política
         </a>
-        <a class="nav-link category  my-3" href="/">
+        <a class="nav-link category  my-3" (click)="filterArticles()">
             Deportes
         </a>
-        <a class="nav-link category  my-3" href="/">
+        <a class="nav-link category  my-3" (click)="filterArticles()">
             Economía
         </a>
-        <a class="nav-link category  my-3" href="/">
+        <a class="nav-link category  my-3" (click)="filterArticles()">
             Medioambiente
         </a>
-        <a class="nav-link category  my-3" href="/">
+        <a class="nav-link category  my-3" (click)="filterArticles()">
             Vacaciones
         </a>
     </div>
-    <div class="d-flex flex-wrap justify-content-between">
-        <div class="card bg-dark text-white my-2">
+    <div class="d-flex flex-wrap justify-content-between" >
+        <div class="card bg-dark text-white my-2" *ngFor="let article of articles">
             <a class="nav-link" href="/">
-                <img src="http://localhost:3900/api/images/Recesion.jpg" alt="Imagen artículo">
+                <img [src]="article.image" alt="Imagen artículo">
                 <div class="card-img-overlay">
-                  <p class="card-text">30 Junio 2023</p>
-                  
+                  <p class="card-text date">{{(article.created) | date: 'dd/MM/yyyy'}}</p>                  
                 </div>
                 <div class="position-absolute bottom-0 m-3">
-                    <h4 class=" text-center card-text title">Preocupante recesión en el mercado Argentino </h4>
+                    <h4 class=" text-center card-text title">{{article.title}} </h4>
                 </div>
             </a>
-        </div>
-        <div class="card bg-dark text-white my-2">
-            <img src="http://localhost:3900/api/images/Recesion.jpg" class="" alt="...">
-            <div class="card-img-overlay">
-              <p class="card-text">30 Junio 2023</p>
-              
-            </div>
-            <div class="position-absolute bottom-0 m-3">
-                <h4 class=" text-center card-text title">Preocupante recesión en el mercado Argentino </h4>
-            </div>
-        </div>
-        <div class="card bg-dark text-white my-2">
-            <img src="http://localhost:3900/api/images/Recesion.jpg" class="" alt="...">
-            <div class="card-img-overlay">
-              <p class="card-text">30 Junio 2023</p>
-              
-            </div>
-            <div class="position-absolute bottom-0 m-3">
-                <h4 class=" text-center card-text title">Preocupante recesión en el mercado Argentino </h4>
-            </div>
-        </div>
-        <div class="card bg-dark text-white my-2">
-            <img src="http://localhost:3900/api/images/Recesion.jpg" class="" alt="...">
-            <div class="card-img-overlay">
-              <p class="card-text">30 Junio 2023</p>
-              
-            </div>
-            <div class="position-absolute bottom-0 m-3">
-                <h4 class=" text-center card-text title">Preocupante recesión en el mercado Argentino </h4>
-            </div>
-        </div>
+        </div>        
     </div>
 </div>
