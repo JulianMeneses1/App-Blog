@@ -18,6 +18,11 @@ const routes: Routes = [
       import('./modules/blog/blog.module').then((m) => m.BlogModule)
   },
   {
+    path: 'categories/:category',
+    loadChildren: () =>
+      import('./modules/articles-by-category/articles-by-category.module').then((m) => m.ArticlesByCategoryModule)
+  },
+  {
     path: '',
     redirectTo: '/home',
     pathMatch: 'full'

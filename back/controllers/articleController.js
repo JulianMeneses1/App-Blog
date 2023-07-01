@@ -66,7 +66,7 @@ const getAllArticles = (req, res) => {
     // En este caso obtenemos todos los documentos, por eso no pasamos filtros
     const query = Article.find({})
     // los ordenamos de más nuevo a más viejo
-                         .sort({date: -1})
+                         .sort({created: -1})
     // limitamos la cantidad de documentos a traer, según el parámetro de ruta ingresado
                          .limit(req.params.quantity)
                          .exec()
@@ -82,6 +82,25 @@ const getAllArticles = (req, res) => {
             message: "Error al obtener los artículos"
         })
     })
+}
+
+const getArticlesByCategory = (req, res) => {
+    Article.find({"category":req.params.category})
+           .sort({created: -1})
+           .limit(req.params.quantity)
+           .exec()
+    .then((articles)=> {
+        return res.status(200).json({
+            status: "success",
+            counter: articles.length,
+            articles
+        })
+    }).catch(error=> {
+        return res.status(500).json({
+            status: "error",    
+            message: "Error al obtener los artículos"
+        })
+    })   
 }
 
 const getArticleById = (req, res) => { 
@@ -175,6 +194,7 @@ module.exports = {
     saveArticles,
     getAllArticles,
     getArticleById,
+    getArticlesByCategory,
     deleteById,
     update,
     searcher

@@ -1,15 +1,14 @@
-import { Component, OnInit } from '@angular/core';
-import { ArticlesService } from '../../services/articles.service';
-import { ArticleModel } from 'src/app/core/models/Article.interface';
+import { Component } from '@angular/core';
 import { Subscription } from 'rxjs';
+import { ArticleModel } from 'src/app/core/models/Article.interface';
+import { ArticlesService } from 'src/app/modules/blog/services/articles.service';
 
 @Component({
-  selector: 'app-blog',
-  templateUrl: './blog.component.html',
-  styleUrls: ['./blog.component.css']
+  selector: 'app-articles-by-category',
+  templateUrl: './articles-by-category.component.html',
+  styleUrls: ['./articles-by-category.component.css']
 })
-export class BlogComponent implements OnInit {
-
+export class ArticlesByCategoryComponent {
   articles: ArticleModel[] = [];
   articlesSubscription?: Subscription;
 
@@ -22,6 +21,5 @@ export class BlogComponent implements OnInit {
     sessionStorage.getItem('articles')
     ? this.articles = JSON.parse(sessionStorage.getItem('articles')!)
     : this.articlesService.setStorage();
-  } 
-
+  }
 }

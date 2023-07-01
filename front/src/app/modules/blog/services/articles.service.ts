@@ -25,10 +25,10 @@ export class ArticlesService {
     return this.subjectUpdateArticles.asObservable();
   }
 
-  // public updatePeople(people:ArticleModel[]):void {    
-  //   this.subjectUpdateArticles.next(people); 
-  //   sessionStorage.setItem('people',JSON.stringify(people));  
-  // }
+  public updateArticles(articles:ArticleModel[]):void {    
+    this.subjectUpdateArticles.next(articles); 
+    sessionStorage.setItem('articles',JSON.stringify(articles));  
+  }
 
   public setStorage():void {
     this.getArticles().subscribe(data => {
@@ -39,6 +39,10 @@ export class ArticlesService {
 
   public getArticles ():Observable <any> {    
     return this.httpClient.get<any>(this.url);
+  }
+
+  public getArticlesByCategory(category:string):Observable<any>{
+    return this.httpClient.get<any>(this.url+'category/'+category)
   }
 
   public addArticle (article: ArticleModel):Observable <ArticleModel> {
