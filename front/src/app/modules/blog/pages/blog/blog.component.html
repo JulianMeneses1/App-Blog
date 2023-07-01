@@ -1,4 +1,4 @@
-<div class=" my-4 container" style="padding: 0 7em">
+<div class=" my-4 container" style="padding: 0 7em" infiniteScroll (scrolled)="onScrollDown()">
     <div class="d-flex align-items-center gap-5">     
         <div class="d-flex justify-content-between align-items-center" style="width: 70%">
             <a class="nav-link category my-3" href="/blog" (click)="showAllArticles()">
@@ -36,7 +36,7 @@
             
         </div>
     </div>
-    <div *ngIf="!noArticleFound" class="d-flex flex-wrap" >
+    <div *ngIf="!noArticleFound" class="d-flex flex-wrap"  >
         <div class="card bg-dark text-white my-3 me-4" *ngFor="let article of articles">                         
             <div class="overlay"></div>
             <img [src]="article.image" alt="Imagen artículo">            

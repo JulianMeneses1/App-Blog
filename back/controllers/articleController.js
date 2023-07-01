@@ -1,6 +1,11 @@
 const {validateArticle} = require("../helpers/validationArticle");
 const Article = require("../models/Article");
 
+const options = {
+    page: 1,
+    limit: 3
+}
+
 const save = (req, res) => {
     // Validar los datos
     try {
@@ -18,10 +23,7 @@ const save = (req, res) => {
     article.save(article)
         // Si la promesa se resuelve bien, o sea se carga el artículo en la bd, lo devolvemos en la respuesta
         .then( () => {            
-            return res.status(200).json({  
-                status: "success",  
-                article: article
-            })   
+            return res.status(200).send(article); 
         // Si hay algún error, devolvemos un status 500   
         }).catch((error) => {
             return res.status(500).json({
@@ -49,10 +51,7 @@ const saveArticles = (req, res) => {
     });    
     Promise.all(savedArticles)
         .then((result) => {
-            return res.status(200).json({
-                status: "success",
-                articles: result,
-              });
+            return res.status(200).send(result);
         }).catch((error) => {
             return res.status(500).json({
               status: "error",
@@ -64,18 +63,11 @@ const saveArticles = (req, res) => {
 const getAllArticles = (req, res) => { 
     // en el método find pasamos los filtros (where) y con exec ejecutamos la consulta. 
     // En este caso obtenemos todos los documentos, por eso no pasamos filtros
-    const query = Article.find({})
-    // los ordenamos de más nuevo a más viejo
-                         .sort({created: -1})
-    // limitamos la cantidad de documentos a traer, según el parámetro de ruta ingresado
-                         .limit(req.params.quantity)
-                         .exec()
-                         .then((articles)=>{
-        return res.status(200).json({  
-            status: "success",
-            counter: articles.length,  
-            articles
-        })  
+    Article.paginate({}, options)
+            .then((result)=>{
+        const sortedArticles = result.docs.sort((a, b) => b.created - a.created);
+        result.docs = sortedArticles;
+        return res.status(200).send(result); 
     }).catch((error) => {
         return res.status(500).json({
             status: "error",    
@@ -85,16 +77,12 @@ const getAllArticles = (req, res) => {
 }
 
 const getArticlesByCategory = (req, res) => {
-    Article.find({"category":req.params.category})
-           .sort({created: -1})
-           .limit(req.params.quantity)
-           .exec()
-    .then((articles)=> {
-        return res.status(200).json({
-            status: "success",
-            counter: articles.length,
-            articles
-        })
+    Article.paginate({"category":req.params.category}, options)
+      
+    .then((result)=> {
+        const sortedArticles = result.docs.sort((a, b) => b.created - a.created);
+        result.docs = sortedArticles;
+        return res.status(200).send(result)
     }).catch(error=> {
         return res.status(500).json({
             status: "error",    
@@ -108,10 +96,7 @@ const getArticleById = (req, res) => {
                     .exec()
                     .then((article)=>{
         if (article) {
-            return res.status(200).json({  
-                status: "success",
-                article
-            }) 
+            return res.status(200).send(article) 
         }        
     }).catch((error) => {
         return res.status(404).json({
@@ -135,10 +120,7 @@ const searcher = (req, res) => {
                 message: "No se encontraron artículos"
             }) 
         }
-        return res.status(200).json({  
-            status: "success",
-            articles
-        })
+        return res.status(200).send(articles);
     }).catch(error => {
         return res.status(500).json({
             status: "error", 
@@ -150,11 +132,7 @@ const searcher = (req, res) => {
 const deleteById = (req, res) => {
     Article.findOneAndDelete({_id:req.params.id})
         .then ( (article) => {
-            return res.status(200).json({  
-                status: "success",
-                article, 
-                message: "Artículo eliminado"
-            })  
+            return res.status(200).send(article);  
         }).catch((error)=>{
             return res.status(404).json({
                 status: "not found", 
@@ -176,11 +154,7 @@ const update = (req, res) => {
     // y por último ponemos que nos devuelva el objeto actualizado (si está en false new te devuelve el objeto original)
     Article.findOneAndUpdate({_id: req.params.id}, req.body, {new: true})
         .then((article)=>{
-            return res.status(200).json({  
-                status: "success",
-                article, 
-                message: "Artículo actualizado"
-            })  
+            return res.status(200).send(article)  
         }).catch((error)=>{
             return res.status(404).json({
                 status: "not found", 

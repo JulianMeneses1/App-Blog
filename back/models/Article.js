@@ -1,4 +1,5 @@
 const { Schema, model } = require("mongoose");
+const mongoosePaginate = require("mongoose-paginate-v2");
 
 // con Schema definimos el esquema que van a tener todos los artículos 
 const ArticleShema = Schema({
@@ -25,6 +26,7 @@ const ArticleShema = Schema({
     }
 })
 
+ArticleShema.plugin(mongoosePaginate)
 // Exportamos este esquema bajo un modelo con un determinado nombre, el cual debería ser el mismo que la colección en Mongo pero 
 // con mayúscula y en singular (mongoose se encarga de agregarle una s, ponerlo en minúscula y buscar en Mongo si hay una
 // colección con ese nombre, si es así la acción se hace sobre esa colección, y si en cambio la colección no existe se crea).

@@ -31,7 +31,7 @@ export class BlogComponent implements OnInit {
   filterArticles (category:string) {
     this.articlesService.getArticlesByCategory(category).subscribe(
       data => {
-        this.articlesService.updateArticles(data.articles);
+        this.articlesService.updateArticles(data);
         this.noArticleFound = false;
       })
   }
@@ -49,7 +49,7 @@ export class BlogComponent implements OnInit {
     if(event.target.value != "") {
       this.articlesService.getArticleBySearcher(event.target.value).subscribe({
         next: (data => {
-          this.articles = data.articles;
+          this.articles = data;
           this.noArticleFound = false;
         }), error: (() => this.noArticleFound = true)
       })
@@ -59,6 +59,10 @@ export class BlogComponent implements OnInit {
   toggleEdition (article: ArticleModel) {
     this.editionMode = !this.editionMode;
     this.idArticleSelected = article._id!;
+  }
+
+  onScrollDown () {
+    console.log("asd")
   }
 
 }

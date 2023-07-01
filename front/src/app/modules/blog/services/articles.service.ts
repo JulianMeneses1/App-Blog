@@ -32,13 +32,17 @@ export class ArticlesService {
 
   public setStorage():void {
     this.getArticles().subscribe(data => {
-      sessionStorage.setItem('articles',JSON.stringify(data.articles));      
-      this.subjectUpdateArticles.next(data.articles);
+      sessionStorage.setItem('articles',JSON.stringify(data));      
+      this.subjectUpdateArticles.next(data);
     })      
   }
 
   public getArticles ():Observable <any> {    
     return this.httpClient.get<any>(this.url);
+  }
+
+  public getArticlesByPage (pageNum:number):any {
+
   }
 
   public getArticlesByCategory(category:string):Observable<any>{
