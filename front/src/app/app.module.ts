@@ -5,6 +5,12 @@ import { AppComponent } from './app.component';
 import { HomeModule } from './modules/home/home.module';
 import { HttpClientModule } from '@angular/common/http';
 import { SharedModule } from './shared/shared.module';
+import { StoreModule } from '@ngrx/store';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { articlesReducer } from './state/reducers/articles.reducer';
+import { ROOT_REDUCERS } from './state/app.state';
+import { EffectsModule } from '@ngrx/effects';
+import { ArticlesEffects } from './state/effects/articles.effects';
 
 @NgModule({
   declarations: [
@@ -15,7 +21,10 @@ import { SharedModule } from './shared/shared.module';
     AppRoutingModule,
     SharedModule,
     HomeModule,
-    HttpClientModule
+    HttpClientModule,
+    StoreModule.forRoot(ROOT_REDUCERS),
+    EffectsModule.forRoot([ArticlesEffects]),
+    StoreDevtoolsModule.instrument({ name: 'TEST' })
   ],
   providers: [],
   bootstrap: [AppComponent]

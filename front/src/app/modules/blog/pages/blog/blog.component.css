@@ -14,6 +14,7 @@
     top: 10%
 }
 
+
 span {
     font-size: 15px
 }
@@ -63,9 +64,10 @@ svg {
     cursor: pointer;
 }
 
-.category:active {
-    color:rgb(114, 190, 190) !important;
+.selected {
+    color:rgb(114, 190, 190);
 }
+
 .overlay {
     position: absolute;
     top: 0;

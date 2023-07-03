@@ -1,25 +1,25 @@
 <div class=" my-4 container" style="padding: 0 7em" infiniteScroll (scrolled)="onScrollDown()">
     <div class="d-flex align-items-center gap-5">     
         <div class="d-flex justify-content-between align-items-center" style="width: 70%">
-            <a class="nav-link category my-3" href="/blog" (click)="showAllArticles()">
+            <a class="nav-link category my-3" (click)="showAllArticles()">
                 Todos
             </a>
-            <a class="nav-link category  my-3" href="/categories/política" (click)="filterArticles('Política')">
+            <a class="nav-link category  my-3"  (click)="changeLinkColor('política'); filterArticlesByCategory('Política')" [ngClass]="{'selected': selectedLink === 'política'}">
                 Política
             </a>
-            <a class="nav-link category   my-3" href="/categories/deportes"  (click)="filterArticles('Deportes')">
+            <a class="nav-link category   my-3"  (click)="changeLinkColor('deportes'); filterArticlesByCategory('Deportes')" [ngClass]="{'selected': selectedLink === 'deportes'}">
                 Deportes
             </a>
-            <a class="nav-link category   my-3" href="/categories/economía"  (click)="filterArticles('Economía')">
+            <a class="nav-link category   my-3"  (click)="changeLinkColor('economía'); filterArticlesByCategory('Economía')" [ngClass]="{'selected': selectedLink === 'economía'}">
                 Economía
             </a>
-            <a class="nav-link category   my-3" href="/categories/medioambiente"  (click)="filterArticles('Medioambiente')">
+            <a class="nav-link category   my-3"  (click)="changeLinkColor('medioambiente'); filterArticlesByCategory('Medioambiente')" [ngClass]="{'selected': selectedLink === 'medioambiente'}">
                 Medioambiente
             </a>
-            <a class="nav-link category   my-3" href="/categories/vacaciones"  (click)="filterArticles('Vacaciones')">
+            <a class="nav-link category   my-3"  (click)="changeLinkColor('vacaciones'); filterArticlesByCategory('Vacaciones')" [ngClass]="{'selected': selectedLink === 'vacaciones'}">
                 Vacaciones
             </a>
-        </div>
+        </div>       
         <div class="d-flex justify-content-end" style="width: 30%">
             <svg *ngIf="!searcherVisible" (click)="toggleSearcher()" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="gray" class="bi bi-search" viewBox="0 0 16 16">
                 <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
@@ -28,7 +28,7 @@
                 <svg id="searcher-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="gray" class="bi bi-search" viewBox="0 0 16 16">
                     <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
                 </svg>
-                <input (keyup.enter)="onEnter($event)" maxlength="30" placeholder="Buscar por título" >
+                <input (keyup.enter)="filterArticlesBySearcher($event)" maxlength="30" [defaultValue]="search" placeholder="Buscar por título" >
                 <svg id="close-searcher-icon" (click)="toggleSearcher()" xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="gray" class="bi bi-x" viewBox="0 0 16 16">
                     <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
                 </svg>
@@ -36,8 +36,13 @@
             
         </div>
     </div>
-    <div *ngIf="!noArticleFound" class="d-flex flex-wrap"  >
-        <div class="card bg-dark text-white my-3 me-4" *ngFor="let article of articles">                         
+    <div *ngIf="(isLoading$ | async)" class="d-flex align-items-center justify-content-center mt-5">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+    <div *ngIf="!noArticleFound && !(isLoading$ | async)" class="d-flex flex-wrap"  >
+        <div class="card bg-dark text-white my-3 me-4" *ngFor="let article of (articles$ | async)">                         
             <div class="overlay"></div>
             <img [src]="article.image" alt="Imagen artículo">            
             <div class="card-img-overlay d-flex justify-content-between">

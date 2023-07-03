@@ -61,9 +61,10 @@ const saveArticles = (req, res) => {
 }
 
 const getAllArticles = (req, res) => { 
+    const page = req.params.page ? req.params.page : 1;
     // en el método find pasamos los filtros (where) y con exec ejecutamos la consulta. 
     // En este caso obtenemos todos los documentos, por eso no pasamos filtros
-    Article.paginate({}, {page: req.params.page, limit:3})
+    Article.paginate({}, {page, limit:3})
             .then((result)=>{
         const sortedArticles = result.docs.sort((a, b) => b.created - a.created);
         result.docs = sortedArticles;
@@ -77,7 +78,9 @@ const getAllArticles = (req, res) => {
 }
 
 const getArticlesByCategory = (req, res) => {
-    Article.paginate({"category":req.params.category}, {page: req.params.page, limit:3})
+    const page = req.params.page ? req.params.page : 1;
+
+    Article.paginate({"category":req.params.category}, {page, limit:3})
       
     .then((result)=> {
         const sortedArticles = result.docs.sort((a, b) => b.created - a.created);
@@ -107,9 +110,10 @@ const getArticleById = (req, res) => {
 }
 
 const searcher = (req, res) => {
+    const page = req.params.page ? req.params.page : 1;
     Article.paginate(
         // verificamos si hay algún título que incluya el parámetro pasado (lo tomamos dentro de una expresión regular)
-        {"title": {"$regex": req.params.string, "$options": "i"}}, {page: req.params.page, limit:3}
+        {"title": {"$regex": req.params.string, "$options": "i"}}, {page, limit:3}
     )
     .then ((result) => {
         if (result.docs.length==0) {

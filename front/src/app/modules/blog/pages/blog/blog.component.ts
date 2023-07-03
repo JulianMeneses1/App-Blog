@@ -1,73 +1,126 @@
 import { Component, OnInit } from '@angular/core';
-import { ArticlesService } from '../../services/articles.service';
 import { ArticleModel } from 'src/app/core/models/Article.interface';
-import { Subscription } from 'rxjs';
+import { Observable } from 'rxjs';
+import { Store } from '@ngrx/store';
+import { loadAllArticles, loadArticlesByCategory, loadArticlesBySearcher } from 'src/app/state/actions/articles.actions';
+import { selectListArticles, selectLoadingArticles } from 'src/app/state/selectors/articles.selector';
+import { AppState } from 'src/app/state/app.state';
 
 @Component({
   selector: 'app-blog',
   templateUrl: './blog.component.html',
   styleUrls: ['./blog.component.css']
 })
-export class BlogComponent implements OnInit {
 
-  articles: ArticleModel[] = [];
-  articlesSubscription?: Subscription;
+export class BlogComponent implements OnInit {
+  // el $ indica que la variable va a ser de tipo observable 
+  isLoading$: Observable<boolean> = new Observable();
+  articles$:Observable<ArticleModel[]> = new Observable();
   searcherVisible: boolean = false;
+  search: string = '';
   editionMode: boolean = false;
   noArticleFound: boolean = false;
-  idArticleSelected: string = "";
+  idArticleSelected: string = '';
   page : number = 2;
+  selectedLink: string = '';
+  typeOfFilter: string = "all";
 
-  constructor(private articlesService: ArticlesService) {
-    this.articlesSubscription = this.articlesService.onUpdateArticles().subscribe(
-      data => this.articles = data)
+  constructor(private store: Store<AppState>) {
+    this.isLoading$ = this.store.select(selectLoadingArticles);
+    this.articles$ = this.store.select(selectListArticles);
   }
 
-  ngOnInit():void {
-    sessionStorage.getItem('articles')
-    ? this.articles = JSON.parse(sessionStorage.getItem('articles')!)
-    : this.articlesService.setStorage(1);
+  ngOnInit():void { 
+    // si articles no está definido los obtenemos de la bd   
+    sessionStorage.getItem('articles') || this.store.dispatch(loadAllArticles({}));
+    // si articles está definido pero está vacío (cuando no se encontró ningún artículo en el buscador) devolvemos el "Sin Resultados" 
+    JSON.parse(sessionStorage.getItem('articles')!)?.length==0 && (this.noArticleFound = true);
+    // para mantener el color activo de la categoría seleccionada
+    sessionStorage.getItem('selectedLink') && (this.selectedLink = sessionStorage.getItem('selectedLink')!);
+    // para mantener visible el buscador si estaba activo
+    if (sessionStorage.getItem('search')) {
+      this.searcherVisible = true;
+      this.search = sessionStorage.getItem('search')!;
+    }
   } 
 
-  filterArticles (category:string) {
-    this.articlesService.getArticlesByCategory(category, 1).subscribe(
-      data => {
-        this.articlesService.updateArticles(data.docs);
-        this.noArticleFound = false;
-      })
+  filterArticlesByCategory (category:string, page?:number) {
+    this.store.dispatch(loadArticlesByCategory({category, page}))
+    this.noArticleFound = false;
+    this.typeOfFilter = category;
+    this.removeSearch();
   }
 
-  showAllArticles () {
-    this.articlesService.setStorage(1);
+  showAllArticles (page?:number) {
+    this.store.dispatch(loadAllArticles({page}));
     this.noArticleFound = false;
+    this.typeOfFilter = "all";
+    this.removeSearch();
+    this.selectedLink='';
+    sessionStorage.removeItem('selectedLink');
+  }
+
+  filterArticlesBySearcher (event?:any, page?:number) {
+    const search = event.target.value;
+    if(search != "") {
+      this.store.dispatch(loadArticlesBySearcher({search, page}));      
+      this.articles$.subscribe((data) => {
+        if (data.length == 0) {
+          this.noArticleFound = true;
+        } else {
+          this.noArticleFound = false;
+        }
+      }) 
+      this.typeOfFilter = search; 
+      sessionStorage.setItem('search',search); 
+      sessionStorage.removeItem('selectedLink');
+      this.selectedLink= ''
+    }   
+  }
+
+  removeSearch () {
+    sessionStorage.removeItem('search');
+    this.search= '';
+    this.searcherVisible= false;
   }
 
   toggleSearcher () {
     this.searcherVisible = !this.searcherVisible;
-  }
-
-  onEnter (event:any) {
-    if(event.target.value != "") {
-      this.articlesService.getArticleBySearcher(event.target.value, 1).subscribe({
-        next: (data => {
-          this.articles = data.docs;
-          this.noArticleFound = false;
-        }), error: (() => this.noArticleFound = true)
-      })
-    }   
+    this.search='';
+    sessionStorage.removeItem('search');
   }
 
   toggleEdition (article: ArticleModel) {
-    this.editionMode = !this.editionMode;
-    this.idArticleSelected = article._id!;
+    if (this.idArticleSelected === article._id) {
+      this.editionMode = !this.editionMode;
+    } else {
+      this.editionMode = true;
+      this.idArticleSelected = article._id!;
+    }
   }
 
-  onScrollDown () {
-    this.articlesService.getArticles(this.page).subscribe(
-      (data) => {
-        data.docs.forEach((article:any)=> this.articles.push(article));       
-      }
-    );
+   onScrollDown () {
+    switch (this.typeOfFilter) {
+      case "all":
+        console.log(this.page)
+        this.showAllArticles(this.page);
+        break;
+        case "Política":
+        case "Deportes":
+        case "Economía":
+        case "Medioambiente":
+        case "Vacaciones":
+        console.log(this.typeOfFilter)
+        this.filterArticlesByCategory(this.typeOfFilter, this.page)
+        break;
+      default:
+        this.filterArticlesBySearcher(this.typeOfFilter)
+    }
     this.page += 1;
+   }
+
+   changeLinkColor(link: string) {
+    this.selectedLink = link;
+    sessionStorage.setItem('selectedLink',link);
   }
 }

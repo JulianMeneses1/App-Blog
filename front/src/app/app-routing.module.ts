@@ -2,15 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes, UrlMatchResult, UrlSegment } from '@angular/router';
 import { HomeComponent } from './modules/home/pages/home/home.component';
 
-const blogOrCategoryMatcher = (segments: UrlSegment[]): UrlMatchResult | null => {
-  if (segments.length === 1 && segments[0].path === 'blog') {
-    return { consumed: segments };
-  } else if (segments.length === 2 && segments[0].path === 'categories') {
-    return { consumed: segments };
-  } else {
-    return null;
-  }
-};
+
 
 const routes: Routes = [
   {
@@ -23,7 +15,7 @@ const routes: Routes = [
       import('./modules/create-article/create-article.module').then((m) => m.CreateArticleModule)
   },
   {
-    matcher: blogOrCategoryMatcher,
+    path: 'blog',
     loadChildren: () =>
       import('./modules/blog/blog.module').then((m) => m.BlogModule)
   },
