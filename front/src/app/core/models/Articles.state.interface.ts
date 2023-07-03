@@ -2,5 +2,7 @@ import { ArticleModel } from "./Article.interface";
 
 export interface ArticlesState {
     isLoading:boolean,
-    articles: ArticleModel[]
+    articles: {
+        [category: string]: ArticleModel[];
+      }
 }

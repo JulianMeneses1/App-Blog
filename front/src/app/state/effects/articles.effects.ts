@@ -12,12 +12,14 @@ import { ArticlesService } from 'src/app/modules/blog/services/articles.service'
 export class ArticlesEffects {
 
   loadAllArticles$ = createEffect(() => this.actions$.pipe(
-    ofType('[Blog Page] Load All Articles'),
-    exhaustMap(({page}) => this.articlesService.getAllArticles(page)
+    ofType('[Blog Page] Load all articles'),
+    exhaustMap(({page, isScrolling}) => this.articlesService.getAllArticles(page)
       .pipe(
         map(data => { 
-            sessionStorage.setItem('articles',JSON.stringify(data.docs));
-            return { type: '[Blog Page] Loaded success', articles: data.docs }
+            if(isScrolling) {              
+              return { type: '[Blog Page] Loaded scrolling success', articles: data.docs }
+            } 
+            return { type: '[Blog Page] Loaded all articles success', articles: data.docs }
         }),
         catchError(() => EMPTY)
       ))
@@ -25,12 +27,14 @@ export class ArticlesEffects {
   );
 
   loadArticlesByCategory$ = createEffect(() => this.actions$.pipe(
-    ofType('[Blog Page] Load Articles By Category'),
-    exhaustMap(({category, page}) => this.articlesService.getArticlesByCategory(category,page)
+    ofType('[Blog Page] Load articles by category'),
+    exhaustMap(({category, page, isScrolling}) => this.articlesService.getArticlesByCategory(category,page)
       .pipe(
         map(data => { 
-            sessionStorage.setItem('articles',JSON.stringify(data.docs));
-            return { type: '[Blog Page] Loaded success', articles: data.docs }
+          if(isScrolling) {
+            return { type: '[Blog Page] Loaded scrolling success', articles: data.docs }
+          }
+          return { type: '[Blog Page] Loaded articles by category success', articles: data.docs, category }
         }),
         catchError(() => EMPTY)
       ))
@@ -38,16 +42,17 @@ export class ArticlesEffects {
   );
 
   loadArticlesBySearcher$ = createEffect(() => this.actions$.pipe(
-    ofType('[Blog Page] Load Articles By Searcher'),
-    exhaustMap(({search,page}) => this.articlesService.getArticlesBySearcher(search,page)
+    ofType('[Blog Page] Load articles by searcher'),
+    exhaustMap(({search,page, isScrolling}) => this.articlesService.getArticlesBySearcher(search,page)
       .pipe(
         map(data => { 
-            sessionStorage.setItem('articles',JSON.stringify(data.docs));
-            return { type: '[Blog Page] Loaded success', articles: data.docs }
+          if(isScrolling) {
+            return { type: '[Blog Page] Loaded scrolling success', articles: data.docs }
+          }
+          return { type: '[Blog Page] Loaded articles by searcher success', articles: data.docs }
         }),
         catchError(() => {
-            sessionStorage.setItem('articles',JSON.stringify([]));
-            return of({ type: '[Blog Page] Loaded success', articles: [] })
+            return of({ type: '[Blog Page] Loaded articles by searcher success', articles: [] })
         })
       ))
     )

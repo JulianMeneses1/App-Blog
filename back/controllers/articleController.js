@@ -3,7 +3,7 @@ const Article = require("../models/Article");
 
 const options = {
     page: 2,
-    limit: 3
+    limit:103
 }
 
 const save = (req, res) => {
@@ -62,7 +62,7 @@ const saveArticles = (req, res) => {
 
 const getAllArticles = (req, res) => { 
     const page = req.params.page ? req.params.page : 1;
-    // en el método find pasamos los filtros (where) y con exec ejecutamos la consulta. 
+    // en el método paginate (si no paginamos usamos find) pasamos los filtros (where) y con exec ejecutamos la consulta (si es find en vez de paginator). 
     // En este caso obtenemos todos los documentos, por eso no pasamos filtros
     Article.paginate({}, {page, limit:3})
             .then((result)=>{

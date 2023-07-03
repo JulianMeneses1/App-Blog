@@ -1,7 +1,7 @@
-<div class=" my-4 container" style="padding: 0 7em" infiniteScroll (scrolled)="onScrollDown()">
-    <div class="d-flex align-items-center gap-5">     
+<div class=" my-4 container" style="padding: 0 7em">
+    <div class="d-flex align-items-center gap-5" >     
         <div class="d-flex justify-content-between align-items-center" style="width: 70%">
-            <a class="nav-link category my-3" (click)="showAllArticles()">
+            <a class="nav-link category my-3" (click)="changeLinkColor('todos');showAllArticles()" [ngClass]="{'selected': selectedLink === 'todos'}">
                 Todos
             </a>
             <a class="nav-link category  my-3"  (click)="changeLinkColor('política'); filterArticlesByCategory('Política')" [ngClass]="{'selected': selectedLink === 'política'}">
@@ -32,15 +32,12 @@
                 <svg id="close-searcher-icon" (click)="toggleSearcher()" xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="gray" class="bi bi-x" viewBox="0 0 16 16">
                     <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
                 </svg>
-            </div>
-            
+            </div>            
         </div>
-    </div>
-    <div *ngIf="(isLoading$ | async)" class="d-flex align-items-center justify-content-center mt-5">
-        <div class="spinner-border text-primary" role="status">
-            <span class="visually-hidden">Loading...</span>
-        </div>
-    </div>
+    </div>  
+    <div *ngIf="(isLoading$ | async)" class="d-flex align-items-center justify-content-center" style="height: 50vh;"> 
+        <div class="spinner-border text-primary" role="status"></div>
+    </div> 
     <div *ngIf="!noArticleFound && !(isLoading$ | async)" class="d-flex flex-wrap"  >
         <div class="card bg-dark text-white my-3 me-4" *ngFor="let article of (articles$ | async)">                         
             <div class="overlay"></div>
@@ -73,7 +70,7 @@
                 </div>
             </a>
         </div>        
-    </div>
+    </div>    
     <div *ngIf="noArticleFound" class="mt-5">
         <h5 class="text-center">Sin Resultados</h5>
         <p class="text-center">Parece que el artículo que estás buscando no existe. Prueba con otra búsqueda</p>      

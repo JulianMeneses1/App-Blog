@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ArticleModel } from 'src/app/core/models/Article.interface';
-import { Observable } from 'rxjs';
+import { Observable, map, firstValueFrom } from 'rxjs';
 import { Store } from '@ngrx/store';
-import { loadAllArticles, loadArticlesByCategory, loadArticlesBySearcher } from 'src/app/state/actions/articles.actions';
+import { loadAllArticles, loadArticlesBySearcher, loadArticlesByCategory } from 'src/app/state/actions/articles.actions';
 import { selectListArticles, selectLoadingArticles } from 'src/app/state/selectors/articles.selector';
 import { AppState } from 'src/app/state/app.state';
 
@@ -15,15 +15,14 @@ import { AppState } from 'src/app/state/app.state';
 export class BlogComponent implements OnInit {
   // el $ indica que la variable va a ser de tipo observable 
   isLoading$: Observable<boolean> = new Observable();
-  articles$:Observable<ArticleModel[]> = new Observable();
+  articles$:Observable<any> = new Observable();
   searcherVisible: boolean = false;
   search: string = '';
   editionMode: boolean = false;
   noArticleFound: boolean = false;
   idArticleSelected: string = '';
-  page : number = 2;
-  selectedLink: string = '';
-  typeOfFilter: string = "all";
+  selectedLink: string = 'todos';
+  page:number = 2;
 
   constructor(private store: Store<AppState>) {
     this.isLoading$ = this.store.select(selectLoadingArticles);
@@ -33,8 +32,11 @@ export class BlogComponent implements OnInit {
   ngOnInit():void { 
     // si articles no está definido los obtenemos de la bd   
     sessionStorage.getItem('articles') || this.store.dispatch(loadAllArticles({}));
+    this.articles$=this.store.select(selectListArticles).pipe(
+      map(type => sessionStorage.getItem('typeOfFilter') ? type[sessionStorage.getItem('typeOfFilter')!] : type['Todos'])
+    ); 
     // si articles está definido pero está vacío (cuando no se encontró ningún artículo en el buscador) devolvemos el "Sin Resultados" 
-    JSON.parse(sessionStorage.getItem('articles')!)?.length==0 && (this.noArticleFound = true);
+    JSON.parse(sessionStorage.getItem('articles')!).Búsqueda?.length==0 && (this.noArticleFound = true);
     // para mantener el color activo de la categoría seleccionada
     sessionStorage.getItem('selectedLink') && (this.selectedLink = sessionStorage.getItem('selectedLink')!);
     // para mantener visible el buscador si estaba activo
@@ -42,39 +44,47 @@ export class BlogComponent implements OnInit {
       this.searcherVisible = true;
       this.search = sessionStorage.getItem('search')!;
     }
-  } 
-
-  filterArticlesByCategory (category:string, page?:number) {
-    this.store.dispatch(loadArticlesByCategory({category, page}))
-    this.noArticleFound = false;
-    this.typeOfFilter = category;
-    this.removeSearch();
   }
 
-  showAllArticles (page?:number) {
-    this.store.dispatch(loadAllArticles({page}));
+  filterArticlesByCategory (category:string) {
+    if(!(JSON.parse(sessionStorage.getItem('articles')!).category)) {
+      this.store.dispatch(loadArticlesByCategory({category}))
+    }      
+    this.articles$=this.store.select(selectListArticles).pipe(
+      map(type => type[category])
+    );  
     this.noArticleFound = false;
-    this.typeOfFilter = "all";
     this.removeSearch();
-    this.selectedLink='';
-    sessionStorage.removeItem('selectedLink');
+    sessionStorage.setItem('typeOfFilter',category)
   }
 
-  filterArticlesBySearcher (event?:any, page?:number) {
+  showAllArticles () {
+    this.articles$=this.store.select(selectListArticles).pipe(
+      map(type => type['Todos'])
+    ); 
+    this.noArticleFound = false;
+    this.removeSearch();
+    sessionStorage.setItem('typeOfFilter','Todos');
+  }
+
+  filterArticlesBySearcher (event:any) {
     const search = event.target.value;
     if(search != "") {
-      this.store.dispatch(loadArticlesBySearcher({search, page}));      
-      this.articles$.subscribe((data) => {
+      this.store.dispatch(loadArticlesBySearcher({search}))
+      this.articles$=this.store.select(selectListArticles).pipe(
+        map(type => type['Búsqueda'])
+      );      
+      this.articles$.subscribe((data) => {    
         if (data.length == 0) {
           this.noArticleFound = true;
         } else {
           this.noArticleFound = false;
         }
       }) 
-      this.typeOfFilter = search; 
-      sessionStorage.setItem('search',search); 
+      this.selectedLink= '';
+      sessionStorage.setItem('search',search);
+      sessionStorage.setItem('typeOfFilter','Búsqueda');
       sessionStorage.removeItem('selectedLink');
-      this.selectedLink= ''
     }   
   }
 
@@ -98,28 +108,7 @@ export class BlogComponent implements OnInit {
       this.idArticleSelected = article._id!;
     }
   }
-
-   onScrollDown () {
-    switch (this.typeOfFilter) {
-      case "all":
-        console.log(this.page)
-        this.showAllArticles(this.page);
-        break;
-        case "Política":
-        case "Deportes":
-        case "Economía":
-        case "Medioambiente":
-        case "Vacaciones":
-        console.log(this.typeOfFilter)
-        this.filterArticlesByCategory(this.typeOfFilter, this.page)
-        break;
-      default:
-        this.filterArticlesBySearcher(this.typeOfFilter)
-    }
-    this.page += 1;
-   }
-
-   changeLinkColor(link: string) {
+  changeLinkColor(link: string) {
     this.selectedLink = link;
     sessionStorage.setItem('selectedLink',link);
   }
