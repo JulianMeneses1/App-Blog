@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { ArticleModel } from 'src/app/core/models/Article.interface';
-import { Observable, map, firstValueFrom } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import { Store } from '@ngrx/store';
 import { loadAllArticles, loadArticlesBySearcher, loadArticlesByCategory } from 'src/app/state/actions/articles.actions';
 import { selectListArticles, selectLoadingArticles } from 'src/app/state/selectors/articles.selector';
 import { AppState } from 'src/app/state/app.state';
+import { ArticlesService } from '../../services/articles.service';
 
 @Component({
   selector: 'app-blog',
@@ -15,28 +16,38 @@ import { AppState } from 'src/app/state/app.state';
 export class BlogComponent implements OnInit {
   // el $ indica que la variable va a ser de tipo observable 
   isLoading$: Observable<boolean> = new Observable();
+  isLoadingScrolling: boolean = false;
   articles$:Observable<any> = new Observable();
+  articlesScrolling : ArticleModel[] = [];
   searcherVisible: boolean = false;
   search: string = '';
   editionMode: boolean = false;
   noArticleFound: boolean = false;
   idArticleSelected: string = '';
-  selectedLink: string = 'todos';
+  selectedLink: string = '';
   page:number = 2;
+  typeOfFilter: string = '';
+  moreData: boolean = true;
 
-  constructor(private store: Store<AppState>) {
+  constructor(private store: Store<AppState>, 
+              private articlesService : ArticlesService) {
     this.isLoading$ = this.store.select(selectLoadingArticles);
     this.articles$ = this.store.select(selectListArticles);
   }
 
   ngOnInit():void { 
-    // si articles no está definido los obtenemos de la bd   
+    // si articles no está definido lo obtenemos de la bd   
     sessionStorage.getItem('articles') || this.store.dispatch(loadAllArticles({}));
-    this.articles$=this.store.select(selectListArticles).pipe(
-      map(type => sessionStorage.getItem('typeOfFilter') ? type[sessionStorage.getItem('typeOfFilter')!] : type['Todos'])
-    ); 
-    // si articles está definido pero está vacío (cuando no se encontró ningún artículo en el buscador) devolvemos el "Sin Resultados" 
-    JSON.parse(sessionStorage.getItem('articles')!).Búsqueda?.length==0 && (this.noArticleFound = true);
+    this.typeOfFilter = sessionStorage.getItem('typeOfFilter')! || 'Todos';
+    this.articles$=this.store.select(selectListArticles).pipe(      
+      map(type => this.typeOfFilter ? type[this.typeOfFilter] : type['Todos'])
+    );     
+    // si articles está definido pero no hay artículos en el campo búsqueda (cuando no se encontró ningún artículo en el buscador) 
+    // y search posee una búsqueda devolvemos el "Sin Resultados" 
+    const articlesData = JSON.parse(sessionStorage.getItem('articles')!);
+    if (articlesData && articlesData.Búsqueda?.length === 0 && sessionStorage.getItem('search')) {
+      this.noArticleFound = true;
+    }
     // para mantener el color activo de la categoría seleccionada
     sessionStorage.getItem('selectedLink') && (this.selectedLink = sessionStorage.getItem('selectedLink')!);
     // para mantener visible el buscador si estaba activo
@@ -47,24 +58,31 @@ export class BlogComponent implements OnInit {
   }
 
   filterArticlesByCategory (category:string) {
-    if(!(JSON.parse(sessionStorage.getItem('articles')!).category)) {
+    if((JSON.parse(sessionStorage.getItem('articles')!)[category]).length==0) {     
       this.store.dispatch(loadArticlesByCategory({category}))
     }      
     this.articles$=this.store.select(selectListArticles).pipe(
       map(type => type[category])
     );  
-    this.noArticleFound = false;
     this.removeSearch();
-    sessionStorage.setItem('typeOfFilter',category)
+    this.resetVariables(category);   
+  }
+
+  resetVariables (filter: string) {
+    this.noArticleFound = false;
+    this.page= 2;
+    this.articlesScrolling = [];
+    this.typeOfFilter = filter;
+    sessionStorage.setItem('typeOfFilter', filter);
+    this.moreData = true;
   }
 
   showAllArticles () {
     this.articles$=this.store.select(selectListArticles).pipe(
       map(type => type['Todos'])
     ); 
-    this.noArticleFound = false;
-    this.removeSearch();
-    sessionStorage.setItem('typeOfFilter','Todos');
+    this.resetVariables('Todos');    
+    this.removeSearch();   
   }
 
   filterArticlesBySearcher (event:any) {
@@ -81,10 +99,15 @@ export class BlogComponent implements OnInit {
           this.noArticleFound = false;
         }
       }) 
-      this.selectedLink= '';
+      this.selectedLink= '';  
       sessionStorage.setItem('search',search);
+      this.search = search;
       sessionStorage.setItem('typeOfFilter','Búsqueda');
       sessionStorage.removeItem('selectedLink');
+      this.typeOfFilter = search;
+      this.page= 2;
+      this.articlesScrolling = [];
+      this.moreData=true;
     }   
   }
 
@@ -98,6 +121,8 @@ export class BlogComponent implements OnInit {
     this.searcherVisible = !this.searcherVisible;
     this.search='';
     sessionStorage.removeItem('search');
+    sessionStorage.removeItem('selectedLink');
+    this.selectedLink= '';
   }
 
   toggleEdition (article: ArticleModel) {
@@ -108,6 +133,45 @@ export class BlogComponent implements OnInit {
       this.idArticleSelected = article._id!;
     }
   }
+
+  onScrollDown() {    
+    if (this.moreData) {
+      switch (this.typeOfFilter) {      
+        case "Todos":          
+          this.isLoadingScrolling = true;
+          this.articlesService.getAllArticles(this.page).subscribe((data) => {
+            this.addArticlesScrolling(data, 'Todos');
+          }); 
+          break;
+        case "Política":
+        case "Economía":
+        case "Medioambiente":
+        case "Deportes":
+        case "Vacaciones":
+            this.isLoadingScrolling = true;
+            this.articlesService.getArticlesByCategory(this.typeOfFilter,this.page).subscribe((data) => {
+              this.addArticlesScrolling(data, this.typeOfFilter);      
+            });
+            break;
+          default:
+            this.isLoadingScrolling = true;
+            this.articlesService.getArticlesBySearcher(this.search,this.page).subscribe((data) => {
+              this.addArticlesScrolling(data, 'Búsqueda');         
+            })
+        }
+    }
+  }
+
+  addArticlesScrolling (data:any, filter: string) {
+    this.articlesScrolling = this.articlesScrolling.concat(data.docs);
+    this.articles$ = this.store.select(selectListArticles).pipe(
+      map(type => type[filter].concat(this.articlesScrolling))
+    );
+    data.page == data.totalPages || data.totalPages == 1 && (this.moreData=false);     
+    this.isLoadingScrolling = false;
+    this.page += 1;
+  }
+
   changeLinkColor(link: string) {
     this.selectedLink = link;
     sessionStorage.setItem('selectedLink',link);

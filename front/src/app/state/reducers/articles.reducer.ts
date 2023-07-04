@@ -1,5 +1,5 @@
 import { createReducer, on } from "@ngrx/store"
-import { loadAllArticles, loadArticlesByCategory, loadArticlesBySearcher, loadedAllArticles, loadedArticlesByCategory, loadedArticlesBySearcher, loadedArticlesScrolling } from "../actions/articles.actions"
+import { loadAllArticles, loadArticlesByCategory, loadArticlesBySearcher, loadedAllArticles, loadedArticlesByCategory, loadedArticlesBySearcher } from "../actions/articles.actions"
 import { ArticlesState } from "src/app/core/models/Articles.state.interface"
 
 const initialArticles = JSON.parse(sessionStorage.getItem('articles')!) || {
@@ -9,8 +9,7 @@ const initialArticles = JSON.parse(sessionStorage.getItem('articles')!) || {
     Economía:[],
     Medioambiente:[],
     Vacaciones:[],
-    Búsqueda:[],
-    Scrolling:[]
+    Búsqueda:[]
 }
 
 export const initialState: ArticlesState = { isLoading: false, articles : initialArticles } 
@@ -22,7 +21,6 @@ export const articlesReducer = createReducer(
     on(loadArticlesBySearcher, (state) => ({...state, isLoading : true})),
     // para acceder al argumento que le pasamos en la acción hay que desestructurarlo con el nombre que le asignamos al argumento
     on(loadedAllArticles, ((state, {articles}) => {
-        console.log(articles)
         const updatedArticles = {
             ...state.articles,
             Todos: articles
@@ -58,12 +56,30 @@ export const articlesReducer = createReducer(
                 }
         })
     ),
-    on(loadedArticlesScrolling, ((state, {articles}) => {           
-        return {
-            ...state, 
-            isLoading: false,
-            articles: {...state.articles, Scrolling: articles}
-        }
-    })
-    )     
+    // on(loadedAllArticlesScrolling, ((state, {articles}) => { 
+    //     const updatedArticles = {
+    //         ...state.articlesScrolling,
+    //         TodosScrolling: state.articlesScrolling['TodosScrolling'].concat(articles),
+    //         };              
+    //     return {
+    //         ...state, 
+    //         isLoading: false,
+    //         articles: updatedArticles
+    //         }
+    //     })   
+    // ),
+    
+    // on(loadedArticlesByCategoryScrolling, ((state, {articles, category}) => { 
+        
+    //     const updatedArticles = {
+    //         ...state.articles,
+    //         [category]: state.articles[category].concat(articles),
+    //         };              
+    //     return {
+    //         ...state, 
+    //         isLoading: false,
+    //         articles: updatedArticles
+    //         }        
+    //     })
+    // ) 
 )

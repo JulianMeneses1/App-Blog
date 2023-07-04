@@ -13,7 +13,7 @@ export const loadArticlesByCategory = createAction(
 
 export const loadArticlesBySearcher = createAction(
     '[Blog Page] Load articles by searcher',
-    props<{  page?:number, search: string, isScrolling?:boolean }>()
+    props<{ search: string }>()
 );
 
 // con props pasamos un argumento a la acción, en este caso un array de artículos bajo la propiedad articles
@@ -32,9 +32,14 @@ export const loadedArticlesBySearcher = createAction(
     props<{ articles: ArticleModel[] }>()
 );
 
-export const loadedArticlesScrolling = createAction(
-    '[Blog Page] Loaded scrolling success',
+export const loadedAllArticlesScrolling = createAction(
+    '[Blog Page] Loaded all articles scrolling success',
     props<{ articles: ArticleModel[] }>()
+);
+
+export const loadedArticlesByCategoryScrolling = createAction(
+    '[Blog Page] Loaded articles by categories scrolling success',
+    props<{ articles: ArticleModel[], category : string }>()
 );
 
 export const addArticle = createAction(

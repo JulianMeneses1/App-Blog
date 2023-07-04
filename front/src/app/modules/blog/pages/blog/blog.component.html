@@ -1,4 +1,5 @@
-<div class=" my-4 container" style="padding: 0 7em">
+<div class=" my-4 container" style="padding: 0 7em 1em 7em" [infiniteScrollDistance]="0.5" [alwaysCallback]="true" infiniteScroll (scrolled)="onScrollDown()" >
+    
     <div class="d-flex align-items-center gap-5" >     
         <div class="d-flex justify-content-between align-items-center" style="width: 70%">
             <a class="nav-link category my-3" (click)="changeLinkColor('todos');showAllArticles()" [ngClass]="{'selected': selectedLink === 'todos'}">
@@ -34,11 +35,11 @@
                 </svg>
             </div>            
         </div>
-    </div>  
-    <div *ngIf="(isLoading$ | async)" class="d-flex align-items-center justify-content-center" style="height: 50vh;"> 
+    </div> 
+    <div *ngIf="(isLoading$ | async)" class="d-flex align-items-center justify-content-center" style="height: 50vh"> 
         <div class="spinner-border text-primary" role="status"></div>
     </div> 
-    <div *ngIf="!noArticleFound && !(isLoading$ | async)" class="d-flex flex-wrap"  >
+    <div *ngIf="!noArticleFound && !(isLoading$ | async)" class="d-flex flex-wrap">                 
         <div class="card bg-dark text-white my-3 me-4" *ngFor="let article of (articles$ | async)">                         
             <div class="overlay"></div>
             <img [src]="article.image" alt="Imagen artículo">            
@@ -69,7 +70,10 @@
                     <h4 class=" text-center card-text title">{{article.title}} </h4>
                 </div>
             </a>
-        </div>        
+        </div> 
+        <div *ngIf="isLoadingScrolling" class="d-flex justify-content-center align-items-center w-100 mt-3"> 
+            <div class="spinner-border text-primary tex" role="status"></div>
+        </div>       
     </div>    
     <div *ngIf="noArticleFound" class="mt-5">
         <h5 class="text-center">Sin Resultados</h5>

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { EMPTY, of } from 'rxjs';
-import { map, exhaustMap, catchError } from 'rxjs/operators';
+import { map, exhaustMap, catchError, delay } from 'rxjs/operators';
 import { ArticlesService } from 'src/app/modules/blog/services/articles.service';
 
 // Los efectos se encargan de interactuar con los servicios para así evitar que el componente llame al servicio para obtener la data.
@@ -15,9 +15,10 @@ export class ArticlesEffects {
     ofType('[Blog Page] Load all articles'),
     exhaustMap(({page, isScrolling}) => this.articlesService.getAllArticles(page)
       .pipe(
+        delay(2000),
         map(data => { 
             if(isScrolling) {              
-              return { type: '[Blog Page] Loaded scrolling success', articles: data.docs }
+              return { type: '[Blog Page] Loaded all articles scrolling success', articles: data.docs }
             } 
             return { type: '[Blog Page] Loaded all articles success', articles: data.docs }
         }),
@@ -32,7 +33,7 @@ export class ArticlesEffects {
       .pipe(
         map(data => { 
           if(isScrolling) {
-            return { type: '[Blog Page] Loaded scrolling success', articles: data.docs }
+            return { type: '[Blog Page] Loaded articles by categories scrolling success', articles: data.docs, category: `${category}Scrolling` }
           }
           return { type: '[Blog Page] Loaded articles by category success', articles: data.docs, category }
         }),
@@ -43,12 +44,9 @@ export class ArticlesEffects {
 
   loadArticlesBySearcher$ = createEffect(() => this.actions$.pipe(
     ofType('[Blog Page] Load articles by searcher'),
-    exhaustMap(({search,page, isScrolling}) => this.articlesService.getArticlesBySearcher(search,page)
+    exhaustMap(({search}) => this.articlesService.getArticlesBySearcher(search)
       .pipe(
-        map(data => { 
-          if(isScrolling) {
-            return { type: '[Blog Page] Loaded scrolling success', articles: data.docs }
-          }
+        map(data => {           
           return { type: '[Blog Page] Loaded articles by searcher success', articles: data.docs }
         }),
         catchError(() => {
