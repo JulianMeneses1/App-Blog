@@ -1,0 +1,11 @@
+<div class="container mt-5">
+    <div *ngIf="!isLoading">
+        <p class="card-text date mb-0">Publicado el: <b>{{(article.created) | date: 'dd/MM/yyyy'}}</b></p>
+        <h2 class="text-center mb-3">{{article.title}}</h2>
+        <img [src]="article.image">
+        <p class="p-4">{{article.content}}</p>
+    </div>
+    <div *ngIf="isLoading" class="d-flex align-items-center justify-content-center" style="height: 50vh"> 
+        <div class="spinner-border text-primary" role="status"></div>
+    </div> 
+</div>

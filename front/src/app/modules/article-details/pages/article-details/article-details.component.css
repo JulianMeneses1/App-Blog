@@ -1,0 +1,14 @@
+img {
+    height: 30em;
+    width: 100%;
+    object-fit: contain;
+}
+
+h2 {
+    font-family: "Lato";
+}
+
+p {
+    font-family: serif;
+    line-height: 30px;
+}

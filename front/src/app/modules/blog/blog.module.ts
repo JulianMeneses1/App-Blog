@@ -7,7 +7,7 @@ import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 
 @NgModule({
   declarations: [
-    BlogComponent,
+    BlogComponent
   ],
   imports: [
     CommonModule,    

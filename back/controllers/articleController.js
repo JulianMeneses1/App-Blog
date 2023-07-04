@@ -109,7 +109,7 @@ const getArticleById = (req, res) => {
     })
 }
 
-const searcher = (req, res) => {
+const getArticlesBySearcher = (req, res) => {
     const page = req.params.page ? req.params.page : 1;
     Article.paginate(
         // verificamos si hay algún título que incluya el parámetro pasado (lo tomamos dentro de una expresión regular)
@@ -173,7 +173,7 @@ module.exports = {
     getAllArticles,
     getArticleById,
     getArticlesByCategory,
+    getArticlesBySearcher,
     deleteById,
-    update,
-    searcher
+    update    
 }

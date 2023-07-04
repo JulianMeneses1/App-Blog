@@ -31,6 +31,10 @@ export class ArticlesService {
     return this.httpClient.get<any>(this.url+'search/'+ search + '/'+page)
   }
 
+  public getArticleById (id:number): Observable<any> {
+    return this.httpClient.get<any>(this.url+'id/'+id)
+  }
+
   public addArticle (article: ArticleModel):Observable <ArticleModel> {
     return this.httpClient.post<ArticleModel>(this.url,article,this.httpOptions);
   }

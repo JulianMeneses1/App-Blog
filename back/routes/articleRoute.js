@@ -13,7 +13,7 @@ router.get("/category/:category/:page?",ArticleController.getArticlesByCategory)
 
 router.get("/id/:id",ArticleController.getArticleById);
 
-router.get("/search/:string/:page?",ArticleController.searcher);
+router.get("/search/:string/:page?",ArticleController.getArticlesBySearcher);
 
 router.post("",ArticleController.save);
 

@@ -67,16 +67,7 @@ export class BlogComponent implements OnInit {
     this.removeSearch();
     this.resetVariables(category);   
   }
-
-  resetVariables (filter: string) {
-    this.noArticleFound = false;
-    this.page= 2;
-    this.articlesScrolling = [];
-    this.typeOfFilter = filter;
-    sessionStorage.setItem('typeOfFilter', filter);
-    this.moreData = true;
-  }
-
+  
   showAllArticles () {
     this.articles$=this.store.select(selectListArticles).pipe(
       map(type => type['Todos'])
@@ -109,6 +100,15 @@ export class BlogComponent implements OnInit {
       this.articlesScrolling = [];
       this.moreData=true;
     }   
+  }
+
+  resetVariables (filter: string) {
+    this.noArticleFound = false;
+    this.page= 2;
+    this.articlesScrolling = [];
+    this.typeOfFilter = filter;
+    sessionStorage.setItem('typeOfFilter', filter);
+    this.moreData = true;
   }
 
   removeSearch () {

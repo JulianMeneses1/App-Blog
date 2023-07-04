@@ -15,6 +15,11 @@ const routes: Routes = [
       import('./modules/create-article/create-article.module').then((m) => m.CreateArticleModule)
   },
   {
+    path: 'article-details/:id',
+    loadChildren: () =>
+      import('./modules/article-details/article-details.module').then((m) => m.ArticleDetailsModule)
+  },
+  {
     path: 'blog',
     loadChildren: () =>
       import('./modules/blog/blog.module').then((m) => m.BlogModule)

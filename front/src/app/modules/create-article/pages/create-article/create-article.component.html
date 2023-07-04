@@ -1,0 +1,77 @@
+<div class="container my-4">
+    <form (ngSubmit)="onSubmit()" [formGroup]="articleForm">
+        <h2>Crear Artículo</h2>
+        <div class="row">
+            <div class="col-xxl-4 col-lg-6 col-md-12 my-1">
+                <label for="title" class="form-label">Título</label>
+                <input                       
+                    class="form-control"    
+                    type="text" 
+                    placeholder="Título del artículo"
+                    (click)="hideErrorMessage()"
+                    formControlName="title"
+                    maxlength="100"
+                    [ngClass]="{'is-invalid':invalidForm && articleForm.get('title')?.errors?.['required']}"
+                    >
+                <p 
+                    class="text-danger m-0" 
+                    *ngIf="invalidForm && articleForm.get('title')?.errors?.['required']">
+                    Este campo es obligatorio
+                </p> 
+            </div>
+            <div class="col-xxl-4 col-lg-6 col-md-12 my-1">
+                <label for="created" class="form-label">Fecha</label>
+                <input                       
+                    class="form-control"    
+                    type="datetime-local"                        
+                    (click)="hideErrorMessage()"
+                    formControlName="created"
+                    >
+                <p 
+                    class="text-danger m-0" 
+                    *ngIf="invalidForm && articleForm.get('created')?.errors?.['required']">
+                    Este campo es obligatorio
+                </p>    
+            </div>  
+            <div class="col-12 my-1">
+                <label for="content" class="form-label">Contenido</label>
+                <textarea                       
+                    class="form-control"    
+                    type="text" 
+                    placeholder="Contenido del artículo"
+                    (click)="hideErrorMessage()"
+                    formControlName="content"
+                    maxlength="5000"
+                    [ngClass]="{'is-invalid':invalidForm && articleForm.get('content')?.errors?.['required']}"
+                ></textarea>
+                <p 
+                    class="text-danger m-0" 
+                    *ngIf="invalidForm && articleForm.get('content')?.errors?.['required']">
+                    Este campo es obligatorio
+                </p> 
+            </div>      
+            <div class="col-xxl-4 col-lg-6 col-md-12 my-1">
+                <label for="nombre" class="form-label">Imagen</label>
+                <input                       
+                    class="form-control"    
+                    type="file"                        
+                    (click)="hideErrorMessage()"
+                    formControlName="image"
+                    accept="image/*"
+                    maxlength="50"
+                    [ngClass]="{'is-invalid':invalidForm && articleForm.get('image')?.errors?.['required']}"
+                    >
+                <p 
+                    class="text-danger m-0" 
+                    *ngIf="invalidForm && articleForm.get('image')?.errors?.['required']">
+                    Este campo es obligatorio
+                </p>
+            </div>              
+        </div>           
+        <div class="d-flex justify-content-center gap-5 mt-3">
+                <button id="submitBtn" type="submit" class="btn btn-primary">Enviar</button>
+                <button id="resetBtn" type="button" class="btn btn-danger" (click)="resetForm()">Resetear Formulario</button>
+        </div>
+    </form>
+</div>
+

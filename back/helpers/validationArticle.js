@@ -1,8 +1,8 @@
 const validator = require("validator");
 
 const validateArticle = (article) => {    
-    let validate_title = !validator.isEmpty(article.title) && validator.isLength(article.title, {min: 5, max: undefined});
-    let validate_content = !validator.isEmpty(article.content) && validator.isLength(article.content, {min: 5, max: undefined});
+    let validate_title = !validator.isEmpty(article.title) && validator.isLength(article.title, {min: 10, max: 100});
+    let validate_content = !validator.isEmpty(article.content) && validator.isLength(article.content, {min: 500, max: 5000});
     let validate_category = !validator.isEmpty(article.category);
     let validate_image = !validator.isEmpty(article.image);
 
