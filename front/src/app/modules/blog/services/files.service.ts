@@ -10,7 +10,7 @@ export class FilesService {
 
   constructor(private httpClient : HttpClient) { }
 
-  private url:string = environment.url+'images/';
+  private url:string = environment.url+'images';
 
   public uploadImage(image:FormData):Observable<any>{
     return this.httpClient.post(this.url,image);

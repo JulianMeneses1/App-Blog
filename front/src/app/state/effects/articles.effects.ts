@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { EMPTY, of } from 'rxjs';
-import { map, exhaustMap, catchError, delay } from 'rxjs/operators';
+import { map, exhaustMap, catchError } from 'rxjs/operators';
 import { ArticlesService } from 'src/app/modules/blog/services/articles.service';
+import Swal from 'sweetalert2';
 
 // Los efectos se encargan de interactuar con los servicios para así evitar que el componente llame al servicio para obtener la data.
 // De esta forma el componente sólo escucha los cambios en los estados (select) y dispara acciones.
@@ -13,14 +14,10 @@ export class ArticlesEffects {
 
   loadAllArticles$ = createEffect(() => this.actions$.pipe(
     ofType('[Blog Page] Load all articles'),
-    exhaustMap(({page, isScrolling}) => this.articlesService.getAllArticles(page)
+    exhaustMap(({page}) => this.articlesService.getAllArticles(page)
       .pipe(
-        delay(2000),
         map(data => { 
-            if(isScrolling) {              
-              return { type: '[Blog Page] Loaded all articles scrolling success', articles: data.docs }
-            } 
-            return { type: '[Blog Page] Loaded all articles success', articles: data.docs }
+          return { type: '[Blog Page] Loaded all articles success', articles: data.docs }
         }),
         catchError(() => EMPTY)
       ))
@@ -29,13 +26,10 @@ export class ArticlesEffects {
 
   loadArticlesByCategory$ = createEffect(() => this.actions$.pipe(
     ofType('[Blog Page] Load articles by category'),
-    exhaustMap(({category, page, isScrolling}) => this.articlesService.getArticlesByCategory(category,page)
+    exhaustMap(({category, page }) => this.articlesService.getArticlesByCategory(category,page)
       .pipe(
         map(data => { 
-          if(isScrolling) {
-            return { type: '[Blog Page] Loaded articles by categories scrolling success', articles: data.docs, category: `${category}Scrolling` }
-          }
-          return { type: '[Blog Page] Loaded articles by category success', articles: data.docs, category }
+         return { type: '[Blog Page] Loaded articles by category success', articles: data.docs, category }
         }),
         catchError(() => EMPTY)
       ))
@@ -55,6 +49,44 @@ export class ArticlesEffects {
       ))
     )
   );  
+
+  onAddArticle$ = createEffect(()=> this.actions$.pipe(
+    ofType('[Create Article Page] On add article'),
+    exhaustMap(({article}) => this.articlesService.addArticle(article)
+      .pipe(
+        map(data => {
+          console.log("service")
+          Swal.fire(                
+            'El artículo '+ data.title +' ha sido creado exitosamente',
+            'success'
+        );
+          return { type: '[Create Article Page] Add article', article: data }
+        }),
+        catchError(()=> EMPTY)
+      ))
+  ));
+
+  onRemoveArticle$ = createEffect(()=> this.actions$.pipe(
+    ofType('[Blog Page] On remove article'),
+    exhaustMap(({id}) => this.articlesService.deleteArticle(id)
+      .pipe(
+        map(data => {
+          return { type: '[Blog Page] Delete article', id: data }
+        }),
+        catchError(()=> EMPTY)
+      ))
+  ));
+
+  onUpdateArticle$ = createEffect(()=> this.actions$.pipe(
+    ofType('[Blog Page] On update article'),
+    exhaustMap(({article}) => this.articlesService.updateArticle(article)
+      .pipe(
+        map(data => {
+          return { type: '[Blog Page] Update article', article: data }
+        }),
+        catchError(()=> EMPTY)
+      ))
+  ))
 
   constructor(
     private actions$: Actions,

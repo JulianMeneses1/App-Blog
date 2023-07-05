@@ -32,14 +32,19 @@ export const loadedArticlesBySearcher = createAction(
     props<{ articles: ArticleModel[] }>()
 );
 
-export const loadedAllArticlesScrolling = createAction(
-    '[Blog Page] Loaded all articles scrolling success',
-    props<{ articles: ArticleModel[] }>()
+export const onAddArticle = createAction(
+    '[Create Article Page] On add article',
+    props<{ article: ArticleModel }>()
 );
 
-export const loadedArticlesByCategoryScrolling = createAction(
-    '[Blog Page] Loaded articles by categories scrolling success',
-    props<{ articles: ArticleModel[], category : string }>()
+export const onRemoveArticle = createAction(
+    '[Blog Page] On remove article',
+    props<{ article: ArticleModel }>()
+);
+
+export const onUpdateArticle = createAction(
+    '[Blog Page] On update article',
+    props<{ article: ArticleModel }>()
 );
 
 export const addArticle = createAction(
@@ -49,7 +54,7 @@ export const addArticle = createAction(
 
 export const removeArticle = createAction(
     '[Blog Page] Remove article',
-    props<{ id: number }>()
+    props<{ article: ArticleModel }>()
 );
 
 export const updateArticle = createAction(

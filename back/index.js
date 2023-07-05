@@ -13,7 +13,7 @@ const port = 3900;
 app.use(cors());
 
 // Convertir el body de cualquier petición HTTP a un objeto js
-app.use(express.json({limit: '10mb'})); // esto se aplica cuando el content-type de los datos sea json
+app.use(express.json({limit: '4mb'})); // esto se aplica cuando el content-type de los datos sea json
 app.use(express.urlencoded({extended:true})); // para content-type igual a x-www-form-urlencoded
 
 // Importamos las rutas

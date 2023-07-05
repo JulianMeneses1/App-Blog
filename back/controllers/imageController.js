@@ -25,7 +25,7 @@ const uploadImage = (req, res) => {
             })
         }) 
     }         
-    return res.status(200).send("http://localhost:3900/api/images/" + req.file.filename);  
+    return res.status(200).json({url:"http://localhost:3900/api/images/" + req.file.filename});  
 }
 
 const getImage = (req,res) => {

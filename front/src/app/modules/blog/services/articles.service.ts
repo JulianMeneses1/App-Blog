@@ -39,11 +39,11 @@ export class ArticlesService {
     return this.httpClient.post<ArticleModel>(this.url,article,this.httpOptions);
   }
 
-  public updatePerson (article: ArticleModel): Observable <ArticleModel> {
+  public updateArticle (article: ArticleModel): Observable <ArticleModel> {
     return this.httpClient.put<ArticleModel>(this.url+article._id,article,this.httpOptions);
   }
 
-  public  deletePerson (id: number) :Observable <ArticleModel> {
+  public  deleteArticle (id: number) :Observable <ArticleModel> {
     return this.httpClient.delete<ArticleModel>(this.url+id);
   }
 }
