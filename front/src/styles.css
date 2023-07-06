@@ -11,3 +11,7 @@ body {
     background-color: var(--background-color-light);
     overflow-x: hidden;
 }
+
+html {
+    scroll-behavior: smooth;
+}

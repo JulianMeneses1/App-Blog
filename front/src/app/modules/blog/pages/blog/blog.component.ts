@@ -1,11 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, Inject, OnInit } from '@angular/core';
 import { ArticleModel } from 'src/app/core/models/Article.interface';
 import { Observable, map } from 'rxjs';
 import { Store } from '@ngrx/store';
-import { loadAllArticles, loadArticlesBySearcher, loadArticlesByCategory } from 'src/app/state/actions/articles.actions';
+import { loadAllArticles, loadArticlesBySearcher, loadArticlesByCategory, onRemoveArticle } from 'src/app/state/actions/articles.actions';
 import { selectListArticles, selectLoadingArticles } from 'src/app/state/selectors/articles.selector';
 import { AppState } from 'src/app/state/app.state';
 import { ArticlesService } from '../../services/articles.service';
+import Swal from 'sweetalert2';
+import { DOCUMENT } from '@angular/common';
 
 @Component({
   selector: 'app-blog',
@@ -28,9 +30,12 @@ export class BlogComponent implements OnInit {
   page:number = 2;
   typeOfFilter: string = '';
   moreData: boolean = true;
+  scrollHeight = 500;
+  showButton = false;
 
   constructor(private store: Store<AppState>, 
-              private articlesService : ArticlesService) {
+              private articlesService : ArticlesService,
+              @Inject(DOCUMENT) private document: Document) {
     this.isLoading$ = this.store.select(selectLoadingArticles);
     this.articles$ = this.store.select(selectListArticles);
   }
@@ -167,7 +172,7 @@ export class BlogComponent implements OnInit {
     this.articles$ = this.store.select(selectListArticles).pipe(
       map(type => type[filter].concat(this.articlesScrolling))
     );
-    data.page == data.totalPages || data.totalPages == 1 && (this.moreData=false);     
+    (data.page == data.totalPages || data.totalPages == 1) && (this.moreData=false);     
     this.isLoadingScrolling = false;
     this.page += 1;
   }
@@ -175,5 +180,34 @@ export class BlogComponent implements OnInit {
   changeLinkColor(link: string) {
     this.selectedLink = link;
     sessionStorage.setItem('selectedLink',link);
+  }
+
+  onDeleteArticle(id: string) {
+    Swal.fire({
+      title:'¿Está seguro que quiere eliminar este artículo?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      cancelButtonText: 'Cancelar',
+      confirmButtonText: 'Confirmar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.store.dispatch(onRemoveArticle({id}));
+        this.articlesScrolling= this.articlesScrolling.filter(article=> article._id != id);
+        this.editionMode=false;
+      }     
+    })
+  }
+
+  @HostListener('window:scroll')
+  onWindowScroll():void {
+    const yOffSet = window.scrollY;
+    const scrollTop = this.document.documentElement.scrollTop;
+    this.showButton = (yOffSet || scrollTop) > this.scrollHeight;
+  }
+
+  scrollTop(): void {
+    this.document.documentElement.scrollTop = 0;
   }
 }

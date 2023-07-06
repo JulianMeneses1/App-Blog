@@ -20,7 +20,6 @@ export const articlesReducer = createReducer(
     on(loadAllArticles, (state) => ({...state, isLoading : true})),
     on(loadArticlesByCategory, (state) => ({...state, isLoading : true})),
     on(loadArticlesBySearcher, (state) => ({...state, isLoading : true})),
-    // para acceder al argumento que le pasamos en la acción hay que desestructurarlo con el nombre que le asignamos al argumento
     on(loadedAllArticles, ((state, {articles}) => {
         const updatedArticles = {
             ...state.articles,
@@ -57,26 +56,10 @@ export const articlesReducer = createReducer(
                 }
         })
     ),
-    on(onAddArticle, ((state)=> {
-        return {
-            ...state,
-            isLoading : true
-        }
-    })),
-    on(onRemoveArticle, ((state)=> {
-        return {
-            ...state,
-            isLoading : true
-        }
-    })),
-    on(onUpdateArticle, ((state)=> {
-        return {
-            ...state,
-            isLoading : true
-        }
-    })),
+    on(onAddArticle, (state) => ({...state, isLoading : true})),
+    on(onRemoveArticle, (state) => ({...state, isLoading : true})),
+    on(onUpdateArticle, (state) => ({...state, isLoading : true})),
     on(addArticle, ((state, {article}) => {
-        console.log(article.category)
         const updatedArticles = {
             ...state.articles,
             Todos: [...state.articles['Todos'], article],
@@ -89,12 +72,11 @@ export const articlesReducer = createReducer(
                 }
         })
     ),
-    on(removeArticle, ((state, {article}) => {
-        
+    on(removeArticle, ((state, {id, category}) => {      
         const updatedArticles = {
             ...state.articles,
-            Todos: [...state.articles['Todos'].filter(existingArticle => existingArticle._id!=article._id)],
-            [article.category]: [...state.articles[article.category].filter(existingArticle => existingArticle._id!=article._id)]
+            Todos: [...state.articles['Todos'].filter(existingArticle => existingArticle._id!=id)],
+            [category]: [...state.articles[category].filter(existingArticle => existingArticle._id!=id)]
           };   
         sessionStorage.setItem('articles',JSON.stringify(updatedArticles));
         return {...state, 
@@ -103,8 +85,7 @@ export const articlesReducer = createReducer(
                 }
         })
     ),
-    on(updateArticle, ((state, {article}) => {
-        
+    on(updateArticle, ((state, {article}) => {  
         const updatedArticles = {
             ...state.articles,
             Todos: [...state.articles['Todos'].map(existingArticle => {
@@ -115,7 +96,7 @@ export const articlesReducer = createReducer(
                 };
                 return existingArticle;
             })],
-            [article.category]: [...state.articles['Todos'].map(existingArticle => {
+            [article.category]: [...state.articles[article.category].map(existingArticle => {
                 if (existingArticle._id == article._id) {
                     return{
                         ...article
@@ -130,6 +111,5 @@ export const articlesReducer = createReducer(
                 articles: updatedArticles
                 }
         })
-    )
-   
+    )   
 )

@@ -39,7 +39,7 @@ export const onAddArticle = createAction(
 
 export const onRemoveArticle = createAction(
     '[Blog Page] On remove article',
-    props<{ article: ArticleModel }>()
+    props<{ id: string }>()
 );
 
 export const onUpdateArticle = createAction(
@@ -54,10 +54,10 @@ export const addArticle = createAction(
 
 export const removeArticle = createAction(
     '[Blog Page] Remove article',
-    props<{ article: ArticleModel }>()
+    props<{ id: string, category: string }>()
 );
 
 export const updateArticle = createAction(
-    '[Blog Page] Update Article',
+    '[Blog Page] Update article',
     props<{ article: ArticleModel }>()
 );

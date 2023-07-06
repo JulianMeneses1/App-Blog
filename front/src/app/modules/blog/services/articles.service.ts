@@ -43,7 +43,7 @@ export class ArticlesService {
     return this.httpClient.put<ArticleModel>(this.url+article._id,article,this.httpOptions);
   }
 
-  public  deleteArticle (id: number) :Observable <ArticleModel> {
+  public  deleteArticle (id: string) :Observable <ArticleModel> {
     return this.httpClient.delete<ArticleModel>(this.url+id);
   }
 }

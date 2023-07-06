@@ -55,8 +55,8 @@ export class ArticlesEffects {
     exhaustMap(({article}) => this.articlesService.addArticle(article)
       .pipe(
         map(data => {
-          console.log("service")
-          Swal.fire(                
+          Swal.fire(
+            'Artículo Creado',                
             'El artículo '+ data.title +' ha sido creado exitosamente',
             'success'
         );
@@ -71,7 +71,12 @@ export class ArticlesEffects {
     exhaustMap(({id}) => this.articlesService.deleteArticle(id)
       .pipe(
         map(data => {
-          return { type: '[Blog Page] Delete article', id: data }
+          Swal.fire( 
+            'Artículo Eliminado',               
+            'El artículo '+ data.title +' ha sido eliminado exitosamente',
+            'success'
+        );
+          return { type: '[Blog Page] Remove article', id: data._id, category: data.category }
         }),
         catchError(()=> EMPTY)
       ))
@@ -82,6 +87,11 @@ export class ArticlesEffects {
     exhaustMap(({article}) => this.articlesService.updateArticle(article)
       .pipe(
         map(data => {
+          Swal.fire( 
+            'Artículo Modificado',               
+            'El artículo '+ data.title +' ha sido actualizado exitosamente',
+            'success'
+        );
           return { type: '[Blog Page] Update article', article: data }
         }),
         catchError(()=> EMPTY)
