@@ -25,7 +25,7 @@ app.use("/api/articles", article_routes);
 app.use("/api/images", image_routes);
 
 // Escuchar peticiones HTTP
-app.listen(port);
+app.listen(port, () => console.log("Started on port " + port));
 
 
 

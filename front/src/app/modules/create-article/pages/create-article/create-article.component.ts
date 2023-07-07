@@ -33,7 +33,7 @@ export class CreateArticleComponent implements OnInit{
   ngOnInit ():void {
     this.articleForm = this.formBuilder.group({
       title: ['',[Validators.required, Validators.minLength(10)]],
-      content: ['',[Validators.required, Validators.minLength(10)]],
+      content: ['',[Validators.required, Validators.minLength(100)]],
       created: [this.actualStrDate,[Validators.required, specialValidators.validateDate]],
       category: ['', [Validators.required]],
       image: ['',[Validators.required]]

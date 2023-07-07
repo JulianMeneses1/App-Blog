@@ -10,7 +10,7 @@
                     placeholder="Título del artículo"
                     (click)="hideErrorMessage()"
                     formControlName="title"
-                    maxlength="100"
+                    maxlength="80"
                     [ngClass]="{'is-invalid':invalidForm && (articleForm.get('title')?.errors?.['required'] || 
                                 articleForm.get('title')?.errors?.['minlength'])}"
                     >
