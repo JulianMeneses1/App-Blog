@@ -1,6 +1,7 @@
-<div class=" my-4 container" style="padding: 0 7em 1em 7em" [alwaysCallback]="true" infiniteScroll (scrolled)="onScrollDown()" >    
+<div class=" my-4 container " style="padding: 0 7em 1em 7em" [infiniteScrollDistance]="0.3" [alwaysCallback]="true" infiniteScroll (scrolled)="onScrollDown()" >    
     <!-- FILTRO CATEGORÍAS Y BÚSQUEDA COLAPSADOS -->
     <div class="d-md-none">
+        <!-- FILTRO BÚSQUEDA  -->
         <div class="d-flex">
             <svg *ngIf="!searcherVisible" (click)="toggleSearcher()" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="gray" class="bi bi-search" viewBox="0 0 16 16">
                 <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
@@ -9,23 +10,23 @@
                 <svg id="searcher-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="gray" class="bi bi-search" viewBox="0 0 16 16">
                     <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
                 </svg>
-                <input (keyup.enter)="filterArticlesBySearcher($event)" maxlength="30" [defaultValue]="search" placeholder="Buscar por título" >
+                <input class="ps-5" (keyup.enter)="filterArticlesBySearcher($event)" maxlength="30" [defaultValue]="search" placeholder="Buscar por título" >
                 <svg id="close-searcher-icon" (click)="toggleSearcher()" xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="gray" class="bi bi-x" viewBox="0 0 16 16">
                     <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
                 </svg>
             </div>            
         </div>
         <!-- FILTRO CATEGORÍAS -->
-        
-        <select (change)="filterArticlesByCategory('Deportes')" class="form-select mt-3 mb-2">
-            <option selected (click)="showAllArticles()">Todos</option>
-            <option  (click)="filterArticlesByCategory('Política')" >Política</option>                                
-            <option  (click)="filterArticlesByCategory('Economía')" >Economía</option>
-            <option (click)="filterArticlesByCategory('Medioambiente')" >Medioambiente</option>
-            <option  (click)="filterArticlesByCategory('Deportes')" >Deportes</option>                        
-            <option  (click)="filterArticlesByCategory('Vacaciones')" >Vacaciones</option>
+        <select [value]="typeOfFilter" (change)="filterArticlesCollapsed($event)" class="form-select mt-3 mb-2">
+            <option value="Todos" selected>Todos</option>
+            <option value="Política">Política</option>                                
+            <option value="Economía">Economía</option>
+            <option value="Medioambiente">Medioambiente</option>
+            <option value="Deportes" >Deportes</option>                        
+            <option value="Vacaciones">Vacaciones</option>
         </select>
     </div>
+    <!-- FILTRO CATEGORÍAS Y BÚSQUEDA NO COLAPSADOS -->
     <div class="d-none d-md-flex align-items-center gap-5" >     
         <!-- FILTRO CATEGORÍAS -->
         <div class="  d-flex justify-content-between align-items-center" style="width: 70%">
@@ -69,7 +70,7 @@
         <div class="spinner-border text-primary" role="status"></div>
     </div> 
     <!-- ARTÍCULOS -->
-    <div *ngIf="!noArticleFound && !(isLoading$ | async)" class="d-flex flex-wrap">                 
+    <div *ngIf="!noArticleFound && !(isLoading$ | async)" class="d-flex flex-wrap">                      
         <div class="card bg-dark text-white my-3 me-4" *ngFor="let article of (articles$ | async)">                         
             <div class="overlay"></div>
             <img [src]="article.image" alt="Imagen artículo">            
@@ -118,5 +119,5 @@
         <svg xmlns="http://www.w3.org/2000/svg" width="34" height="34" fill="gray" class="bi bi-arrow-up-circle" viewBox="0 0 16 16">
             <path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-7.5 3.5a.5.5 0 0 1-1 0V5.707L5.354 7.854a.5.5 0 1 1-.708-.708l3-3a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 5.707V11.5z"/>
         </svg>
-    </button>
+    </button>   
 </div>

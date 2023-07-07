@@ -17,7 +17,7 @@
 #button-up {
     position: fixed;
     bottom: 2em;
-    right: 20em;
+    right: 23em;
     z-index: 30;
     background: none;
     border: none;
@@ -26,8 +26,11 @@
 #button-up:hover {
     transform:scale(1.10)
 }
-
-
+select:focus {
+    box-shadow: none;
+    border: 1px solid #dee2e6 !important
+ 
+}
 span {
     font-size: 15px
 }
@@ -90,13 +93,17 @@ svg {
     background-color: rgba(0, 0, 0, 0.4);
 }
 
+@media screen and (min-width:1000px) and (max-width: 1400px) {
+   
+    #button-up{
+        right: 8em;
+    }
+  
+}
+
 @media screen and (max-width: 1200px) {
     .card {
         width: 45%;        
-    }
-    #button-up{
-        bottom: 2em;
-        right: 5em;
     }
     .container {
         padding: 0 3em 1em 3em !important
@@ -107,6 +114,9 @@ svg {
     .container {
         padding: 0 2em 1em 2em !important
     }   
+    #button-up{
+        right: 5em;
+    }
 }
 
 @media screen and (max-width: 767px) {
@@ -114,8 +124,7 @@ svg {
         width: 100%;
     }
     #button-up{
-        bottom: 5%;
-        right: 1%;
+        right: 0.2em;
     }
     
 }

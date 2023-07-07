@@ -4,12 +4,10 @@ import { BlogRoutingModule } from './blog-routing.module';
 import { BlogComponent } from './pages/blog/blog.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
-import { FilterCollapsedComponent } from './components/filter-collapsed/filter-collapsed.component';
 
 @NgModule({
   declarations: [
-    BlogComponent,
-    FilterCollapsedComponent
+    BlogComponent
   ],
   imports: [
     CommonModule,    

@@ -62,7 +62,7 @@ export class ArticlesEffects {
         );
           return { type: '[Create Article Page] Add article', article: data }
         }),
-        catchError(()=> EMPTY)
+        catchError((error)=>{throw error})
       ))
   ));
 

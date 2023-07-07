@@ -1,11 +1,6 @@
 const {validateArticle} = require("../helpers/validationArticle");
 const Article = require("../models/Article");
 
-const options = {
-    page: 2,
-    limit:103
-}
-
 const save = (req, res) => {
     // Validar los datos
     try {
@@ -64,10 +59,8 @@ const getAllArticles = (req, res) => {
     const page = req.params.page ? req.params.page : 1;
     // en el método paginate (si no paginamos usamos find) pasamos los filtros (where) y con exec ejecutamos la consulta (si es find en vez de paginator). 
     // En este caso obtenemos todos los documentos, por eso no pasamos filtros
-    Article.paginate({}, {page, limit:6})
-            .then((result)=>{
-        const sortedArticles = result.docs.sort((a, b) => b.created - a.created);
-        result.docs = sortedArticles;
+    Article.paginate({}, {page, limit: 6, sort: { created: -1 }})
+            .then((result)=>{       
         return res.status(200).send(result); 
     }).catch((error) => {
         return res.status(500).json({
@@ -80,11 +73,9 @@ const getAllArticles = (req, res) => {
 const getArticlesByCategory = (req, res) => {
     const page = req.params.page ? req.params.page : 1;
 
-    Article.paginate({"category":req.params.category}, {page, limit:6})
+    Article.paginate({"category":req.params.category}, {page, limit:6, sort: { created: -1 }})
       
     .then((result)=> {
-        const sortedArticles = result.docs.sort((a, b) => b.created - a.created);
-        result.docs = sortedArticles;
         return res.status(200).send(result)
     }).catch(error=> {
         return res.status(500).json({
@@ -113,7 +104,7 @@ const getArticlesBySearcher = (req, res) => {
     const page = req.params.page ? req.params.page : 1;
     Article.paginate(
         // verificamos si hay algún título que incluya el parámetro pasado (lo tomamos dentro de una expresión regular)
-        {"title": {"$regex": req.params.string, "$options": "i"}}, {page, limit:6}
+        {"title": {"$regex": req.params.string, "$options": "i"}}, {page, limit:6, sort: { created: -1 }}
     )
     .then ((result) => {
         if (result.docs.length==0) {
@@ -122,8 +113,6 @@ const getArticlesBySearcher = (req, res) => {
                 message: "No se encontraron artículos"
             }) 
         }
-        const sortedArticles = result.docs.sort((a, b) => b.created - a.created);
-        result.docs = sortedArticles;
         return res.status(200).send(result); 
     }).catch(error => {
         return res.status(500).json({

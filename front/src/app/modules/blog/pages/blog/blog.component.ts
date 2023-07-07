@@ -62,6 +62,11 @@ export class BlogComponent implements OnInit {
     }
   }
 
+  filterArticlesCollapsed(event:any) {
+    const category = event.target.value
+    category == 'Todos' ? this.showAllArticles() : this.filterArticlesByCategory(category)
+  }
+
   filterArticlesByCategory (category:string) {
     if((JSON.parse(sessionStorage.getItem('articles')!)[category]).length==0) {     
       this.store.dispatch(loadArticlesByCategory({category}))
@@ -140,7 +145,7 @@ export class BlogComponent implements OnInit {
   }
 
   onScrollDown() {    
-    if (this.moreData) {
+    if (this.moreData && !this.isLoadingScrolling) {
       switch (this.typeOfFilter) {      
         case "Todos":          
           this.isLoadingScrolling = true;
@@ -160,9 +165,14 @@ export class BlogComponent implements OnInit {
             break;
           default:
             this.isLoadingScrolling = true;
-            this.articlesService.getArticlesBySearcher(this.search,this.page).subscribe((data) => {
+            this.articlesService.getArticlesBySearcher(this.search,this.page).subscribe({
+              next: (data) => {
               this.addArticlesScrolling(data, 'Búsqueda');         
-            })
+            }, error: () => {
+              this.moreData=false;     
+              this.isLoadingScrolling = false;
+            }
+          })
         }
     }
   }
@@ -172,7 +182,7 @@ export class BlogComponent implements OnInit {
     this.articles$ = this.store.select(selectListArticles).pipe(
       map(type => type[filter].concat(this.articlesScrolling))
     );
-    (data.page == data.totalPages || data.totalPages == 1) && (this.moreData=false);     
+    (data.page >= data.totalPages || data.totalPages == 1) && (this.moreData=false);     
     this.isLoadingScrolling = false;
     this.page += 1;
   }
