@@ -154,7 +154,7 @@ const update = (req, res) => {
                   status: "not found",
                   message: "El artículo no existe"
                 });
-            } else if (error.status === 500) {
+            } else {
                 return res.status(500).json({
                   status: "internal server error",
                   message: "Ocurrió un error en el servidor"

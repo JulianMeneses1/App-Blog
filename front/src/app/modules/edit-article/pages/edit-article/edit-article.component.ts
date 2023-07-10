@@ -65,7 +65,6 @@ export class EditArticleComponent implements OnInit {
 
   onSubmit ():void {    
     if(this.articleForm.invalid) {
-      console.log("asdsa") 
       this.invalidForm=true;
     } else {
       const articleFormData = {
