@@ -5,9 +5,11 @@ import { DatePipe } from '@angular/common';
 import { specialValidators } from 'src/app/helpers/validations';
 import { FilesService } from 'src/app/modules/blog/services/files.service';
 import { Store } from '@ngrx/store';
-import { loadAllArticles, loadArticlesByCategory, onUpdateArticle } from 'src/app/state/actions/articles.actions';
-import { ActivatedRoute, Router } from '@angular/router';
+import { onUpdateArticle } from 'src/app/state/actions/articles.actions';
+import { ActivatedRoute } from '@angular/router';
 import { ArticlesService } from 'src/app/modules/blog/services/articles.service';
+import { Observable } from 'rxjs';
+import { selectLoadingArticles } from 'src/app/state/selectors/articles.selector';
 
 @Component({
   selector: 'app-edit-article',
@@ -23,16 +25,18 @@ export class EditArticleComponent implements OnInit {
   maxSize:number = 4000000;
   errorImage:boolean = false;
   urlUploadedImage = '';
-  isLoading:boolean = false;
+  isLoadingImage:boolean = false;
+  isLoading$: Observable<boolean> = new Observable();
 
   constructor(private formBuilder: FormBuilder,
               private filesService: FilesService,
               private articlesService: ArticlesService,
               private store: Store<any>,
               private pd:DatePipe,
-              private route: ActivatedRoute,
-              private router: Router) 
-    { }
+              private route: ActivatedRoute) 
+    { 
+      this.isLoading$ = this.store.select(selectLoadingArticles);
+    }
 
   ngOnInit ():void {
     this.articleForm = this.formBuilder.group({
@@ -44,10 +48,10 @@ export class EditArticleComponent implements OnInit {
     });
 
     this.route.params.subscribe(params => {
-      this.isLoading = true;
+      this.isLoadingImage = true;
       this.articlesService.getArticleById(params['id']).subscribe(data => {
         this.article = data;
-        this.isLoading = false;
+        this.isLoadingImage = false;
         this.urlUploadedImage = this.article.image;
         this.articleForm.patchValue({
           title: this.article.title,
@@ -60,16 +64,16 @@ export class EditArticleComponent implements OnInit {
   }
 
   onSubmit ():void {    
-    if(this.articleForm.invalid) { 
+    if(this.articleForm.invalid) {
+      console.log("asdsa") 
       this.invalidForm=true;
     } else {
       const articleFormData = {
         ...this.articleForm.value,
         image: this.urlUploadedImage,
         _id: this.article._id
-      } 
-      this.store.dispatch(onUpdateArticle({article:articleFormData}));     
-      this.router.navigate(['/blog'])     
+      }    
+      this.store.dispatch(onUpdateArticle({article:articleFormData}));   
     }    
   }
 
@@ -89,7 +93,7 @@ export class EditArticleComponent implements OnInit {
         this.urlUploadedImage='';
         return;
       }     
-      this.isLoading = true;
+      this.isLoadingImage = true;
       const formData = new FormData();
       formData.append('file', file);
       this.filesService.uploadImage(formData).subscribe(
@@ -97,9 +101,9 @@ export class EditArticleComponent implements OnInit {
           next: (data) => {
           this.urlUploadedImage = data.url;
           this.errorImage = false;
-          this.isLoading = false;
+          this.isLoadingImage = false;
         }, error: (error) => {
-          this.isLoading = false;
+          this.isLoadingImage = false;
           throw error;
           }}
         );        

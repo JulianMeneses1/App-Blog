@@ -149,10 +149,17 @@ const update = (req, res) => {
         .then((article)=>{
             return res.status(200).send(article)  
         }).catch((error)=>{
-            return res.status(404).json({
-                status: "not found", 
-                message: "El artículo no existe"
-            })
+            if (error.status === 404) {
+                return res.status(404).json({
+                  status: "not found",
+                  message: "El artículo no existe"
+                });
+            } else if (error.status === 500) {
+                return res.status(500).json({
+                  status: "internal server error",
+                  message: "Ocurrió un error en el servidor"
+                });
+            }
         })
 }
 

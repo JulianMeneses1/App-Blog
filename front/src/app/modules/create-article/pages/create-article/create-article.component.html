@@ -62,7 +62,7 @@
                 </p> 
                 <p 
                     class="text-danger m-0" 
-                    *ngIf="invalidForm && articleForm.get('created')?.invalid && articleForm.get('created')?.dirty ">
+                    *ngIf="invalidForm && articleForm.get('created')?.invalid ">
                     Debe ingresar una fecha válida
                 </p>    
             </div>  
@@ -87,7 +87,7 @@
                 <p 
                     class="text-danger m-0" 
                     *ngIf="invalidForm && articleForm.get('content')?.errors?.['minlength']">
-                    Mínimo 10 caracteres.
+                    Mínimo 100 caracteres.
                 </p> 
             </div>      
             <div class="col-xxl-4 col-lg-6 col-md-12 my-1">
@@ -101,8 +101,8 @@
                     accept="image/*"
                     [ngClass]="{'is-invalid':invalidForm && articleForm.get('image')?.errors?.['required']}"
                     >                
-                <div *ngIf="isLoading" style="height:30px" class="spinner-border ms-5 mt-3 text-primary" role="status"></div>
-                <img class="mt-3" *ngIf="urlUploadedImage != ''" [src]="urlUploadedImage"/>
+                <div *ngIf="isLoadingImage" style="height:30px" class="spinner-border ms-5 mt-3 text-primary" role="status"></div>
+                <img class="mt-3" *ngIf="urlUploadedImage != '' && !isLoadingImage" [src]="urlUploadedImage"/>
                 <p 
                     class="text-danger m-0" 
                     *ngIf="invalidForm && articleForm.get('image')?.errors?.['required']">
@@ -116,13 +116,13 @@
             </div>              
         </div>           
         <div class="d-flex justify-content-center mt-3">
-            <button *ngIf="isLoading" id="submitBtn" type="submit" class="btn btn-primary w-25">
+            <button *ngIf="(isLoading$ | async)" id="submitBtn" type="submit" class="btn btn-primary w-25">
                         <div class="d-flex justify-content-between align-items-center">
                             <p class="mb-0 fs-5">Procesando</p>
                             <div class="spinner-border text-info" role="status"></div>
                         </div>
             </button>
-            <button *ngIf="!isLoading" id="submitBtn" type="submit" class="btn btn-primary w-25 fs-5">Enviar</button>
+            <button *ngIf="!(isLoading$ | async)" id="submitBtn" type="submit" class="btn btn-primary w-25 fs-5">Enviar</button>
         </div>
     </form>
 </div>

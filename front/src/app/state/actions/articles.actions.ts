@@ -61,3 +61,7 @@ export const updateArticle = createAction(
     '[Blog Page] Update article',
     props<{ article: ArticleModel }>()
 );
+
+export const finishLoading = createAction(
+    '[All Pages] Finish loading'
+);

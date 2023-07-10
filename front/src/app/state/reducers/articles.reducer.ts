@@ -1,6 +1,6 @@
 import { createReducer, on } from "@ngrx/store"
 import { loadAllArticles, addArticle, removeArticle, updateArticle, loadArticlesByCategory, loadArticlesBySearcher, loadedAllArticles, 
-        loadedArticlesByCategory, loadedArticlesBySearcher, onAddArticle, onRemoveArticle, onUpdateArticle } from "../actions/articles.actions"
+        loadedArticlesByCategory, loadedArticlesBySearcher, onAddArticle, onRemoveArticle, onUpdateArticle, finishLoading } from "../actions/articles.actions"
 import { ArticlesState } from "src/app/core/models/Articles.state.interface"
 
 const initialArticles = JSON.parse(sessionStorage.getItem('articles')!) || {
@@ -111,5 +111,10 @@ export const articlesReducer = createReducer(
                 articles: updatedArticles
                 }
         })
-    )   
+    ),
+    on(finishLoading, ((state)=> {
+        return {...state,
+                isLoading: false
+               }
+    }))   
 )

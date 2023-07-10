@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { EMPTY, of } from 'rxjs';
 import { map, exhaustMap, catchError } from 'rxjs/operators';
@@ -55,6 +56,7 @@ export class ArticlesEffects {
     exhaustMap(({article}) => this.articlesService.addArticle(article)
       .pipe(
         map(data => {
+          this.router.navigate(['/blog']);
           Swal.fire(
             'Artículo Creado',                
             'El artículo '+ data.title +' ha sido creado exitosamente',
@@ -62,7 +64,14 @@ export class ArticlesEffects {
         );
           return { type: '[Create Article Page] Add article', article: data }
         }),
-        catchError((error)=>{throw error})
+        catchError(()=>{
+          Swal.fire(
+            'Error Creación Artículo',                
+            'El título ingresado ya existe',
+            'error'
+        );
+          return of({ type: '[All Pages] Finish loading' })
+        })
       ))
   ));
 
@@ -87,6 +96,7 @@ export class ArticlesEffects {
     exhaustMap(({article}) => this.articlesService.updateArticle(article)
       .pipe(
         map(data => {
+          this.router.navigate(['/blog']);
           Swal.fire( 
             'Artículo Modificado',               
             'El artículo '+ data.title +' ha sido actualizado exitosamente',
@@ -94,12 +104,20 @@ export class ArticlesEffects {
         );
           return { type: '[Blog Page] Update article', article: data }
         }),
-        catchError(()=> EMPTY)
+        catchError(()=>{
+          Swal.fire(
+            'Error Modificación Artículo',                
+            'El título ingresado ya existe',
+            'error'
+        );
+          return of({ type: '[All Pages] Finish loading'})
+        })
       ))
-  ))
+  ));
 
   constructor(
     private actions$: Actions,
-    private articlesService: ArticlesService
+    private articlesService: ArticlesService,
+    private router: Router
   ) {}
 }

@@ -1,13 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { ArticleModel } from 'src/app/core/models/Article.interface';
-import {faCircleCheck} from '@fortawesome/free-solid-svg-icons';
-import { Subscription } from 'rxjs';
+import { Observable } from 'rxjs';
 import { DatePipe } from '@angular/common';
 import { specialValidators } from 'src/app/helpers/validations';
 import { FilesService } from 'src/app/modules/blog/services/files.service';
 import { Store } from '@ngrx/store';
 import { loadAllArticles, loadArticlesByCategory, onAddArticle } from 'src/app/state/actions/articles.actions';
+import { selectLoadingArticles } from 'src/app/state/selectors/articles.selector';
 
 @Component({
   selector: 'app-create-article',
@@ -22,13 +21,16 @@ export class CreateArticleComponent implements OnInit{
   maxSize:number = 4000000;
   errorImage:boolean = false;
   urlUploadedImage = '';
-  isLoading:boolean = false;
+  isLoadingImage:boolean = false;
+  isLoading$: Observable<boolean> = new Observable();
 
   constructor(private formBuilder: FormBuilder,
               private filesService: FilesService,
               private store: Store<any>,
               private pd:DatePipe) 
-  { }
+  {
+      this.isLoading$ = this.store.select(selectLoadingArticles);
+  }
 
   ngOnInit ():void {
     this.articleForm = this.formBuilder.group({
@@ -65,8 +67,6 @@ export class CreateArticleComponent implements OnInit{
       } else {
         this.store.dispatch(onAddArticle({article:articleFormData}));
       }      
-      this.resetForm();      
-      this.articleForm.get('category')?.patchValue('') 
     }    
   }
 
@@ -86,7 +86,7 @@ export class CreateArticleComponent implements OnInit{
         this.urlUploadedImage='';
         return;
       }     
-      this.isLoading = true;
+      this.isLoadingImage = true;
       const formData = new FormData();
       formData.append('file', file);
       this.filesService.uploadImage(formData).subscribe(
@@ -94,9 +94,9 @@ export class CreateArticleComponent implements OnInit{
           next: (data) => {
           this.urlUploadedImage = data.url;
           this.errorImage = false;
-          this.isLoading = false;
+          this.isLoadingImage = false;
         }, error: (error) => {
-          this.isLoading = false;
+          this.isLoadingImage = false;
           throw error;
           }}
         );        
