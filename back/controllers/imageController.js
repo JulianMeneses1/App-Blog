@@ -25,7 +25,7 @@ const uploadImage = (req, res) => {
             })
         }) 
     }         
-    return res.status(200).json({url:"https://app-blog-rh2x.onrender.com/api/" + req.file.filename});  
+    return res.status(200).json({url:"https://app-blog-rh2x.onrender.com/api/images/" + req.file.filename});  
 }
 
 const getImage = (req,res) => {
