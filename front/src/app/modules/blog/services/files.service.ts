@@ -15,4 +15,8 @@ export class FilesService {
   public uploadImage(image:FormData):Observable<any>{
     return this.httpClient.post(this.url,image);
   }
+
+  public getImageHome(imageURL: string): Observable<any> {
+    return this.httpClient.get(imageURL, { responseType: 'blob'})
+  }
 }
